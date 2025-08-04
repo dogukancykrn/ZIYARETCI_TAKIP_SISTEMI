@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: ziyaretci-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    networks:
+      - ziyaretci-network
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: ziyaretci-redis-commander
+    hostname: redis-commander
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOSTS=redis:redis:6379
+    depends_on:
+      - redis
+    networks:
+      - ziyaretci-network
+
+volumes:
+  redis_data:
+
+networks:
+  ziyaretci-network:
+    driver: bridge

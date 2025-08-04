@@ -1,0 +1,6 @@
+@ZiyaretciTakipAPI_HostAddress = http://localhost:5160
+
+GET {{ZiyaretciTakipAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
