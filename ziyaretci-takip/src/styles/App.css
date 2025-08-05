@@ -22,3 +22,89 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+/* Login sayfası animasyonları */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Login card animasyonu */
+.login-card {
+  animation: fadeIn 0.8s ease-out;
+}
+
+/* Gradient arka plan animasyonu */
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.gradient-background {
+  background-size: 200% 200%;
+  animation: gradientShift 8s ease infinite;
+}
+
+/* Hover efektleri */
+.bank-logo:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+/* Responsive tasarım */
+@media (max-width: 768px) {
+  .bank-logo {
+    font-size: 16px !important;
+    left: 15px !important;
+    top: 15px !important;
+  }
+  
+  .bank-logo div:first-of-type {
+    font-size: 20px !important;
+  }
+  
+  .bank-logo > div > div:first-of-type {
+    width: 70px !important;
+    height: 70px !important;
+  }
+  
+  .bank-logo > div > div:first-of-type span {
+    font-size: 18px !important;
+  }
+  
+  .bank-logo > div > div:last-of-type div:first-of-type {
+    font-size: 24px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .bank-logo {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+  
+  .bank-logo > div {
+    flex-direction: column !important;
+    text-align: center !important;
+  }
+}

@@ -97,6 +97,25 @@ export const authService = {
       throw error;
     }
   },
+
+  // Register Admin
+  registerAdmin: async (adminData: {
+    firstName: string;
+    lastName: string;
+    tcNumber: string;
+    email: string;
+    phoneNumber: string;
+    password: string;
+    confirmPassword: string;
+  }): Promise<{ success: boolean; message: string; data: any }> => {
+    try {
+      const response: AxiosResponse<any> = await api.post('/auth/register-admin', adminData);
+      return response.data;
+    } catch (error) {
+      console.error('Admin kayıt hatası:', error);
+      throw error;
+    }
+  },
 };
 
 // Visitor Services

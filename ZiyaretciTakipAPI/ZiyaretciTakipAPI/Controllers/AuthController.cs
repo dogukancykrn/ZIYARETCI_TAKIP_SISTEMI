@@ -92,39 +92,6 @@ namespace ZiyaretciTakipAPI.Controllers
             }
         }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] AdminRegisterDto adminDto)
-        {
-            // Email kontrolü
-            if (await _context.Admins.AnyAsync(a => a.Email == adminDto.Email))
-            {
-                return BadRequest(new { 
-                    success = false, 
-                    message = "Bu email adresi zaten kullanılıyor!" 
-                });
-            }
-
-            var admin = new Admin
-            {
-                Id = Guid.NewGuid(),
-                FullName = adminDto.FullName,
-                Email = adminDto.Email,
-                PhoneNumber = adminDto.PhoneNumber,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(adminDto.Password),
-                Role = "Admin",
-                CreatedAt = DateTime.UtcNow
-            };
-
-            _context.Admins.Add(admin);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { 
-                success = true, 
-                message = "Admin başarıyla oluşturuldu!", 
-                data = new { admin.Id, admin.FullName, admin.Email } 
-            });
-        }
-
         [HttpGet("test")]
         public async Task<IActionResult> Test()
         {
@@ -221,6 +188,92 @@ namespace ZiyaretciTakipAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { success = false, message = "Şifre güncellenirken hata oluştu!", error = ex.Message });
+            }
+        }
+
+        [HttpPost("register-admin")]
+        public async Task<IActionResult> RegisterAdmin([FromBody] AdminRegisterDto registerDto)
+        {
+            try
+            {
+                // Şifre doğrulama
+                if (registerDto.Password != registerDto.ConfirmPassword)
+                {
+                    return BadRequest(new { 
+                        success = false, 
+                        message = "Şifreler eşleşmiyor!" 
+                    });
+                }
+
+                // Email zaten var mı kontrol et
+                var existingAdmin = await _context.Admins.FirstOrDefaultAsync(a => a.Email == registerDto.Email);
+                if (existingAdmin != null)
+                {
+                    return BadRequest(new { 
+                        success = false, 
+                        message = "Bu email adresi zaten kayıtlı!" 
+                    });
+                }
+
+                // TC kimlik no zaten var mı kontrol et
+                var existingTc = await _context.Admins.FirstOrDefaultAsync(a => a.TcNumber == registerDto.TcNumber);
+                if (existingTc != null)
+                {
+                    return BadRequest(new { 
+                        success = false, 
+                        message = "Bu TC kimlik numarası zaten kayıtlı!" 
+                    });
+                }
+
+                // Telefon no zaten var mı kontrol et
+                var existingPhone = await _context.Admins.FirstOrDefaultAsync(a => a.PhoneNumber == registerDto.PhoneNumber);
+                if (existingPhone != null)
+                {
+                    return BadRequest(new { 
+                        success = false, 
+                        message = "Bu telefon numarası zaten kayıtlı!" 
+                    });
+                }
+
+                // Yeni admin oluştur
+                var admin = new Admin
+                {
+                    Id = Guid.NewGuid(),
+                    FullName = $"{registerDto.FirstName} {registerDto.LastName}",
+                    FirstName = registerDto.FirstName,
+                    LastName = registerDto.LastName,
+                    Email = registerDto.Email,
+                    PhoneNumber = registerDto.PhoneNumber,
+                    TcNumber = registerDto.TcNumber,
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+
+                _context.Admins.Add(admin);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { 
+                    success = true, 
+                    message = "Yönetici başarıyla kaydedildi!",
+                    data = new { 
+                        id = admin.Id,
+                        fullName = admin.FullName,
+                        firstName = admin.FirstName,
+                        lastName = admin.LastName,
+                        email = admin.Email,
+                        phoneNumber = admin.PhoneNumber,
+                        tcNumber = admin.TcNumber
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { 
+                    success = false, 
+                    message = "Kayıt işlemi sırasında hata oluştu!", 
+                    error = ex.Message 
+                });
             }
         }
     }

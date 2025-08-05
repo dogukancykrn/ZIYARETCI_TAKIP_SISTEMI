@@ -5,6 +5,7 @@ import trTR from 'antd/locale/tr_TR';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import LoginPage from './pages/LoginPage';
+import AdminRegisterPage from './pages/AdminRegisterPage';
 import Dashboard from './pages/Dashboard';
 import VisitorForm from './pages/VisitorForm';
 import ActiveVisitors from './pages/ActiveVisitors';
@@ -23,8 +24,9 @@ const AppContent: React.FC = () => {
   return (
     <Router>
       <Routes>
-        {/* Giriş yapmamış kullanıcı için sadece login sayfası */}
+        {/* Giriş yapmamış kullanıcı için sadece login ve admin kayıt sayfası */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/admin-register" element={<AdminRegisterPage />} />
         {/* Root (/) her zaman yönlendirilsin */}
         <Route path="/" element={<Navigate to={state.isAuthenticated ? "/dashboard/home" : "/login"} replace />} />
         {!state.isAuthenticated ? (

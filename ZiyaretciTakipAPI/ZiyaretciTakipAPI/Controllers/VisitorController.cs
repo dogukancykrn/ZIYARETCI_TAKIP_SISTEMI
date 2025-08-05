@@ -14,6 +14,7 @@ namespace ZiyaretciTakipAPI.Controllers
         private readonly PostgreSqlDbContext _context;
         private readonly RedisCacheService _cacheService;
 
+        // Ensure only one constructor for DI
         public VisitorController(PostgreSqlDbContext context, RedisCacheService cacheService)
         {
             _context = context;
@@ -46,38 +47,34 @@ namespace ZiyaretciTakipAPI.Controllers
             });
         }
 
-       [HttpGet("active")]
-public async Task<IActionResult> GetActiveVisitors()
-{
-    const string cacheKey = "active_visitors";
-
-    // 1. Önce Redis’te var mı kontrol et
-    var cachedVisitors = await _cacheService.GetAsync<List<Visitor>>(cacheKey);
-    if (cachedVisitors != null)
-    {
-        return Ok(new
+        [HttpGet("active")]
+        public async Task<IActionResult> GetActiveVisitors()
         {
-            success = true,
-            message = "Aktif ziyaretçiler cache üzerinden getirildi",
-            data = cachedVisitors
-        });
-    }
+            const string cacheKey = "active_visitors";
+            var cachedVisitors = await _cacheService.GetAsync<List<Visitor>>(cacheKey);
+            if (cachedVisitors != null)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = "Aktif ziyaretçiler cache üzerinden getirildi",
+                    data = cachedVisitors
+                });
+            }
 
-    // 2. Cache’te yoksa DB'den al ve Redis’e yaz
-    var activeVisitors = await _context.Visitors
-        .Where(v => v.ExitedAt == null)
-        .ToListAsync();
+            var activeVisitors = await _context.Visitors
+                .Where(v => v.ExitedAt == null)
+                .ToListAsync();
 
-    await _cacheService.SetAsync(cacheKey, activeVisitors, TimeSpan.FromMinutes(5));
+            await _cacheService.SetAsync(cacheKey, activeVisitors, TimeSpan.FromMinutes(5));
 
-    return Ok(new
-    {
-        success = true,
-        message = "Aktif ziyaretçiler veritabanından getirildi",
-        data = activeVisitors
-    });
-}
-
+            return Ok(new
+            {
+                success = true,
+                message = "Aktif ziyaretçiler veritabanından getirildi",
+                data = activeVisitors
+            });
+        }
 
         [HttpGet("history")]
         public async Task<IActionResult> GetVisitorHistory()
@@ -107,7 +104,7 @@ public async Task<IActionResult> GetActiveVisitors()
             visitor.ExitedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
             
-                // 🔥 Cache’i temizle (bir sonraki istek taze veri çeksin)
+            // 🔥 Cache'i temizle (bir sonraki istek taze veri çeksin)
             await _cacheService.RemoveAsync("active_visitors");
 
             return Ok(new

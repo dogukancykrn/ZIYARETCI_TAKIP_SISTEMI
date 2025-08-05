@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Card, Typography, message, Space, Alert } from 'antd';
-import { UserOutlined, IdcardOutlined, FileTextOutlined, SaveOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { UserOutlined, IdcardOutlined, SaveOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { visitorService } from '../services/apiService';
 import { VisitorFormData } from '../types';
 
-
-const { Title } = Typography;
 
 const VisitorForm: React.FC = () => {
   const [loading, setLoading] = useState(false);

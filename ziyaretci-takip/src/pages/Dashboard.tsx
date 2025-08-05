@@ -10,7 +10,6 @@ const { Title } = Typography;
 
 const Dashboard: React.FC = () => {
   const [activeVisitors, setActiveVisitors] = useState<Visitor[]>([]);
-  const [allVisitors, setAllVisitors] = useState<Visitor[]>([]);
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState({
     totalActive: 0,
@@ -34,7 +33,6 @@ const Dashboard: React.FC = () => {
       ]);
       
       setActiveVisitors(activeVisitorsData);
-      setAllVisitors(allVisitorsData);
       
       // İstatistikleri hesapla
       const today = new Date().toDateString();

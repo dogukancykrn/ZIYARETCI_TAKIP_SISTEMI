@@ -6,32 +6,24 @@ using ZiyaretciTakipAPI.Data;
 using ZiyaretciTakipAPI.Services;
 using StackExchange.Redis;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost:6379"));
+
+// 📦 Servisler
 builder.Services.AddControllers();
+
+// 🛢️ PostgreSQL Database Config
+builder.Services.AddDbContext<PostgreSqlDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+           .ConfigureWarnings(warnings =>
+               warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
+
+// 🧠 Redis Cache Service Registration
+builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost:6379"));
 builder.Services.AddScoped<RedisCacheService>();
 
-// Database Configuration
-if (builder.Environment.IsDevelopment())
-{
-    // Development ortamında PostgreSQL database kullan
-    builder.Services.AddDbContext<PostgreSqlDbContext>(options =>
-        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
-            .ConfigureWarnings(warnings => 
-                warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
-}
-else
-{
-    // Production ortamında PostgreSQL database kullan
-    builder.Services.AddDbContext<PostgreSqlDbContext>(options =>
-        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
-            .ConfigureWarnings(warnings => 
-                warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
-}
-
-// JWT Authentication
+// 🔐 JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings["SecretKey"] ?? "DefaultSecretKeyForDevelopment123456789";
 var key = Encoding.ASCII.GetBytes(secretKey);
@@ -53,7 +45,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// CORS
+// 🌐 CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
@@ -64,13 +56,13 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// 🔎 Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// 🔁 Middleware Pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -78,15 +70,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseCors("AllowReactApp");
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
-// Initialize database with seed data
+// 🧪 Opsiyonel DB Initialize
 // using (var scope = app.Services.CreateScope())
 // {
 //     var context = scope.ServiceProvider.GetRequiredService<PostgreSqlDbContext>();
