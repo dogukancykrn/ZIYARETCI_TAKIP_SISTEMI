@@ -8,6 +8,19 @@ using ZiyaretciTakipAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// CORS EKLE
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy
+            .WithOrigins(
+                "https://ziyaretci-takip-sistemi.vercel.app"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 // 📦 Servisler
 builder.Services.AddControllers();
@@ -17,10 +30,6 @@ builder.Services.AddDbContext<PostgreSqlDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
            .ConfigureWarnings(warnings =>
                warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
-
-// Redis Cache Service temporarily disabled
-// builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost:6379"));
-// builder.Services.AddScoped<RedisCacheService>();
 
 // 🔐 JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -44,15 +53,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// 🌐 CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowReactApp", policy =>
-        policy.AllowAnyOrigin()
-              .AllowAnyHeader()
-              .AllowAnyMethod());
-});
-
 // 🔎 Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -67,7 +67,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowReactApp");
+app.UseCors("AllowFrontend"); // CORS'u kullan
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
