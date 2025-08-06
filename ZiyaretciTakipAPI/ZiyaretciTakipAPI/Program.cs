@@ -44,15 +44,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// 🌐 CORS - Disabled
-// builder.Services.AddCors(options =>
-// {
-//     options.AddPolicy("AllowReactApp", policy =>
-//         policy.SetIsOriginAllowed(origin => new Uri(origin).Host.EndsWith("vercel.app"))
-//               .AllowAnyHeader()
-//               .AllowAnyMethod()
-//               .AllowCredentials());
-// });
+// 🌐 CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy =>
+        policy.WithOrigins(
+            "https://ziyaretci-takip-sistemi.vercel.app",
+            "https://ziyaretci-takip-sistemi-11x397if0-dogukan-caykirans-projects.vercel.app"
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials());
+});
 
 // 🔎 Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -68,7 +71,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-// app.UseCors("AllowReactApp"); // CORS disabled
+app.UseCors("AllowReactApp");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
