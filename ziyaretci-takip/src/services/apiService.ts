@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { Admin, Visitor, LoginFormData, VisitorFormData, AuthResponse, ApiResponse, VisitorFilter } from '../types';
 
-// Base API URL - Railway deployment URL'si
+// Base API URL
 const API_BASE_URL = 'https://ziyaretcitakipapi-production.up.railway.app/api';
 
 // Axios instance oluşturun
