@@ -1,8 +1,8 @@
 import axios, { AxiosResponse } from 'axios';
 import { Admin, Visitor, LoginFormData, VisitorFormData, AuthResponse, ApiResponse, VisitorFilter } from '../types';
 
-// Base API URL
-const API_BASE_URL = 'https://ziyaretcitakipapi-production.up.railway.app/api';
+// Base API URL - CORS Proxy ile
+const API_BASE_URL = 'https://cors-anywhere.herokuapp.com/https://ziyaretcitakipapi-production.up.railway.app/api';
 
 // Axios instance oluşturun
 const api = axios.create({
