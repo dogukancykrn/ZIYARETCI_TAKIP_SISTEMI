@@ -48,16 +48,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
-        policy.SetIsOriginAllowed(origin =>
-        {
-            var host = new Uri(origin).Host;
-            return host.EndsWith("vercel.app") || 
-                   host.EndsWith("localhost") || 
-                   host.EndsWith("localhost:3000");
-        })
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials());
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod());
 });
 
 // 🔎 Swagger
