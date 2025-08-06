@@ -14,9 +14,13 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll", builder =>
     {
         builder
-            .AllowAnyOrigin() // Tüm originlere izin ver
-            .AllowAnyHeader() // Tüm headerlara izin ver
-            .AllowAnyMethod(); // Tüm HTTP metodlarına izin ver
+            .WithOrigins(
+                "https://ziyaretci-takip-sistemi.vercel.app",
+                "http://localhost:3000"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
@@ -50,6 +54,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = jwtSettings["Audience"],
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero
+        };
+
+        // CORS için events ayarları
+        options.Events = new JwtBearerEvents
+        {
+            OnChallenge = async context =>
+            {
+                context.HandleResponse();
+                context.Response.Headers["Access-Control-Allow-Origin"] = "https://ziyaretci-takip-sistemi.vercel.app";
+                context.Response.Headers["Access-Control-Allow-Credentials"] = "true";
+                context.Response.StatusCode = 401;
+                await context.Response.WriteAsJsonAsync(new { message = "Unauthorized" });
+            }
         };
     });
 
