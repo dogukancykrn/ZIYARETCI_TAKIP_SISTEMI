@@ -4,34 +4,34 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using ZiyaretciTakipAPI.Data;
 using ZiyaretciTakipAPI.Services;
-
+using Microsoft.AspNetCore.Builder;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// CORS EKLE
+// CORS AYARI
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend", policy =>
+    options.AddPolicy("AllowAll", builder =>
     {
-        policy
-            .WithOrigins(
-                "https://ziyaretci-takip-sistemi.vercel.app"
-            )
-            .AllowAnyHeader()
-            .AllowAnyMethod();
+        builder
+            .AllowAnyOrigin() // Tüm originlere izin ver
+            .AllowAnyHeader() // Tüm headerlara izin ver
+            .AllowAnyMethod(); // Tüm HTTP metodlarına izin ver
     });
 });
 
-// 📦 Servisler
+// Servisler
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-// 🛢️ PostgreSQL Database Config
+// PostgreSQL Database Config
 builder.Services.AddDbContext<PostgreSqlDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
            .ConfigureWarnings(warnings =>
                warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 
-// 🔐 JWT Authentication
+// JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings["SecretKey"] ?? "DefaultSecretKeyForDevelopment123456789";
 var key = Encoding.ASCII.GetBytes(secretKey);
@@ -53,30 +53,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// 🔎 Swagger
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 var app = builder.Build();
 
-// 🔁 Middleware Pipeline
+// Middleware Pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// CORS'u UseAuthorization'dan önce kullan
 app.UseHttpsRedirection();
-app.UseCors("AllowFrontend"); // CORS'u kullan
+app.UseCors("AllowAll"); // Middleware sırası önemli
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
-// 🧪 Opsiyonel DB Initialize
-// using (var scope = app.Services.CreateScope())
-// {
-//     var context = scope.ServiceProvider.GetRequiredService<PostgreSqlDbContext>();
-//     context.Database.EnsureCreated();
-// }
 
 app.Run();
