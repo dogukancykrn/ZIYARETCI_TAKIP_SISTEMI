@@ -1,8 +1,8 @@
 import axios, { AxiosResponse } from 'axios';
 import { Admin, Visitor, LoginFormData, VisitorFormData, AuthResponse, ApiResponse, VisitorFilter } from '../types';
 
-// Base API URL - Bu URL'yi backend sunucunuzun URL'si ile değiştirin
-const API_BASE_URL = 'http://localhost:5160/api';
+// Base API URL - Railway deployment URL'si
+const API_BASE_URL = 'https://ziyaretcitakipapi-production.up.railway.app/api';
 
 // Axios instance oluşturun
 const api = axios.create({
