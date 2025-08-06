@@ -11,16 +11,12 @@ var builder = WebApplication.CreateBuilder(args);
 // CORS AYARI
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", builder =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        builder
-            .WithOrigins(
-                "https://ziyaretci-takip-sistemi.vercel.app",
-                "http://localhost:3000"
-            )
+        policy
+            .AllowAnyOrigin()
             .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
+            .AllowAnyMethod();
     });
 });
 
@@ -56,14 +52,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ClockSkew = TimeSpan.Zero
         };
 
-        // CORS için events ayarları
         options.Events = new JwtBearerEvents
         {
             OnChallenge = async context =>
             {
                 context.HandleResponse();
-                context.Response.Headers["Access-Control-Allow-Origin"] = "https://ziyaretci-takip-sistemi.vercel.app";
-                context.Response.Headers["Access-Control-Allow-Credentials"] = "true";
                 context.Response.StatusCode = 401;
                 await context.Response.WriteAsJsonAsync(new { message = "Unauthorized" });
             }
@@ -79,9 +72,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// CORS'u UseAuthorization'dan önce kullan
 app.UseHttpsRedirection();
-app.UseCors("AllowAll"); // Middleware sırası önemli
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

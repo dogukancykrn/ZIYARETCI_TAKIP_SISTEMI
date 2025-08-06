@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Card, Typography, message, Space, Alert } from 'antd';
+import { Form, Input, Button, Card, Typography, Space, Alert } from 'antd';
 import { UserOutlined, IdcardOutlined, SaveOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { visitorService } from '../services/apiService';
 import { VisitorFormData } from '../types';
@@ -9,6 +9,14 @@ const VisitorForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [lastRegisteredVisitor, setLastRegisteredVisitor] = useState<string | null>(null);
+
+  // Form temizlendiğinde error state'ini sıfırla
+  const handleReset = () => {
+    setError(null);
+    setSuccess(false);
+    setLastRegisteredVisitor(null);
+  };
 
   const onFinish = async (values: VisitorFormData) => {
     setLoading(true);
@@ -21,10 +29,14 @@ const VisitorForm: React.FC = () => {
       // Aktif ziyaretçi cache'ini temizle
       sessionStorage.removeItem('active_visitors');
       setSuccess(true);
-      message.success('Ziyaretçi kaydı başarıyla oluşturuldu!');
+      setLastRegisteredVisitor(values.fullName);
       // Formu temizle
       form.resetFields();
-      setTimeout(() => setSuccess(false), 2500);
+      // 2.5 saniye sonra success state'i ve lastRegisteredVisitor'ı resetle
+      setTimeout(() => {
+        setSuccess(false);
+        setLastRegisteredVisitor(null);
+      }, 2500);
     } catch (err: any) {
       console.error('Kayıt hatası:', err);
       console.error('Hata detayı:', err.response);
@@ -39,13 +51,20 @@ const VisitorForm: React.FC = () => {
   return (
     <div style={{ padding: '20px' }}>
       <Card title="Yeni Ziyaretçi Kaydı" style={{ maxWidth: '600px', margin: '0 auto' }}>
-        {success && (
-          <Alert message="Kullanıcı bilgileri başarıyla eklendi!" type="success" showIcon style={{ marginBottom: 16 }} />
+        {success && lastRegisteredVisitor && (
+          <Alert 
+            message="Başarılı!"
+            description={`${lastRegisteredVisitor} isimli ziyaretçi başarıyla kaydedildi.`}
+            type="success" 
+            showIcon 
+            style={{ marginBottom: 16 }} 
+          />
         )}
         <Form
           form={form}
           layout="vertical"
           onFinish={onFinish}
+          onReset={handleReset}
           autoComplete="off"
           initialValues={{ fullName: '', tcNumber: '', visitReason: '' }}
         >
@@ -68,10 +87,25 @@ const VisitorForm: React.FC = () => {
             name="tcNumber"
             label="TC Kimlik No"
             rules={[
-            { required: true, message: 'Lütfen TC kimlik numaranızı girin!' },
-            { len: 11, message: 'TC kimlik numarası 11 haneli olmalıdır!' },
-            { pattern: /^[0-9]+$/, message: 'TC kimlik numarası sadece rakam içermelidir!' }
-        ]}
+              { required: true, message: 'Lütfen TC kimlik numaranızı girin!' },
+              { len: 11, message: 'TC kimlik numarası 11 haneli olmalıdır!' },
+              { pattern: /^[0-9]+$/, message: 'TC kimlik numarası sadece rakam içermelidir!' },
+              {
+                validator: async (_, value) => {
+                  if (!value || value.length !== 11) return;
+                  
+                  // İlk hane 0 olamaz
+                  if (value[0] === '0') {
+                    throw new Error('TC Kimlik numarası 0 ile başlayamaz!');
+                  }
+
+                  // Tüm karakterler rakam olmalı
+                  if (!/^\d{11}$/.test(value)) {
+                    throw new Error('TC Kimlik numarası sadece rakamlardan oluşmalıdır!');
+                  }
+                }
+              }
+            ]}
           >
             <Input 
               prefix={<IdcardOutlined />} 
@@ -88,7 +122,8 @@ const VisitorForm: React.FC = () => {
             label="Ziyaret Nedeni"
             rules={[
               { required: true, message: 'Lütfen ziyaret nedeninizi girin!' },
-              { min: 10, message: 'Ziyaret nedeni en az 10 karakter olmalıdır!' }
+              { min: 3, message: 'Ziyaret nedeni en az 3 karakter olmalıdır!' },
+              { max: 500, message: 'Ziyaret nedeni en fazla 500 karakter olabilir!' }
             ]}
           >
            <Input.TextArea 

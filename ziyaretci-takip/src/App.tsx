@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ConfigProvider, theme } from 'antd';
+import { ConfigProvider, theme, App as AntApp } from 'antd';
 import trTR from 'antd/locale/tr_TR';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
@@ -16,17 +16,24 @@ import './styles/App.css';
 
 const AppContent: React.FC = () => {
   const { state } = useAuth();
+  const { isDarkMode } = useTheme();
 
   if (state.loading) {
     return <div>Yükleniyor...</div>;
   }
 
   return (
-    <Router>
-      <Routes>
-        {/* Giriş yapmamış kullanıcı için sadece login ve admin kayıt sayfası */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/admin-register" element={<AdminRegisterPage />} />
+    <ConfigProvider
+      theme={{
+        algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
+      }}
+      locale={trTR}
+    >
+      <Router>
+        <Routes>
+          {/* Giriş yapmamış kullanıcı için sadece login ve admin kayıt sayfası */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/admin-register" element={<AdminRegisterPage />} />
         {/* Root (/) her zaman yönlendirilsin */}
         <Route path="/" element={<Navigate to={state.isAuthenticated ? "/dashboard/home" : "/login"} replace />} />
         {!state.isAuthenticated ? (
@@ -43,8 +50,9 @@ const AppContent: React.FC = () => {
         )}
       </Routes>
     </Router>
+    </ConfigProvider>
   );
-};
+}
 
 const App: React.FC = () => {
   return (
