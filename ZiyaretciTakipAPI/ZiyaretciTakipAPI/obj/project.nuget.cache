@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "2TgfIPhfCcE=",
+  "dgSpecHash": "o7bi/WU1I1M=",
   "success": true,
   "projectFilePath": "C:\\Users\\dcaykiran\\Desktop\\ziyaretci-takip-2\\ZiyaretciTakipAPI\\ZiyaretciTakipAPI\\ZiyaretciTakipAPI.csproj",
   "expectedPackageFiles": [
@@ -44,8 +44,6 @@
     "C:\\Users\\dcaykiran\\.nuget\\packages\\mono.texttemplating\\3.0.0\\mono.texttemplating.3.0.0.nupkg.sha512",
     "C:\\Users\\dcaykiran\\.nuget\\packages\\npgsql\\9.0.3\\npgsql.9.0.3.nupkg.sha512",
     "C:\\Users\\dcaykiran\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\9.0.4\\npgsql.entityframeworkcore.postgresql.9.0.4.nupkg.sha512",
-    "C:\\Users\\dcaykiran\\.nuget\\packages\\pipelines.sockets.unofficial\\2.2.8\\pipelines.sockets.unofficial.2.2.8.nupkg.sha512",
-    "C:\\Users\\dcaykiran\\.nuget\\packages\\stackexchange.redis\\2.8.58\\stackexchange.redis.2.8.58.nupkg.sha512",
     "C:\\Users\\dcaykiran\\.nuget\\packages\\swashbuckle.aspnetcore\\6.4.0\\swashbuckle.aspnetcore.6.4.0.nupkg.sha512",
     "C:\\Users\\dcaykiran\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.4.0\\swashbuckle.aspnetcore.swagger.6.4.0.nupkg.sha512",
     "C:\\Users\\dcaykiran\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.4.0\\swashbuckle.aspnetcore.swaggergen.6.4.0.nupkg.sha512",

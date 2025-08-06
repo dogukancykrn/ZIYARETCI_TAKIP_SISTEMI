@@ -6,7 +6,7 @@
         "sourceMap": true,
         "target": "es5",
         "jsx": "react",
-        "module": "amd",
+        "module": "esnext",
         "moduleResolution": "node",
         "experimentalDecorators": true,
         "esModuleInterop": true,
@@ -15,9 +15,11 @@
         "strict": false
     },
     "exclude": [
-        "node_modules"
+        "node_modules",
+        "**/*.test.tsx",
+        "src/components/BankLogo.tsx"
     ],
     "include": [
-        "src/**/*"
+        "src"
     ]
 }

@@ -4,7 +4,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using ZiyaretciTakipAPI.Data;
 using ZiyaretciTakipAPI.Services;
-using StackExchange.Redis;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,9 +18,9 @@ builder.Services.AddDbContext<PostgreSqlDbContext>(options =>
            .ConfigureWarnings(warnings =>
                warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 
-// 🧠 Redis Cache Service Registration
-builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost:6379"));
-builder.Services.AddScoped<RedisCacheService>();
+// Redis Cache Service temporarily disabled
+// builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost:6379"));
+// builder.Services.AddScoped<RedisCacheService>();
 
 // 🔐 JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");

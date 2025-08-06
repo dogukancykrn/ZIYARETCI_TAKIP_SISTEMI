@@ -12,13 +12,14 @@ namespace ZiyaretciTakipAPI.Controllers
     public class VisitorController : ControllerBase
     {
         private readonly PostgreSqlDbContext _context;
-        private readonly RedisCacheService _cacheService;
+        // private readonly RedisCacheService _cacheService;
 
         // Ensure only one constructor for DI
-        public VisitorController(PostgreSqlDbContext context, RedisCacheService cacheService)
+        public VisitorController(PostgreSqlDbContext context)
         {
             _context = context;
-            _cacheService = cacheService;
+            // Redis cache service temporarily disabled
+            // _cacheService = cacheService;
         }
 
         [HttpPost]
@@ -37,8 +38,8 @@ namespace ZiyaretciTakipAPI.Controllers
             _context.Visitors.Add(visitor);
             await _context.SaveChangesAsync();
 
-            // Yeni ziyaretçi eklendiğinde aktif ziyaretçi cache'ini temizle
-            await _cacheService.RemoveAsync("active_visitors");
+            // Redis cache temporarily disabled
+            // await _cacheService.RemoveAsync("active_visitors");
 
             return Ok(new { 
                 success = true, 
@@ -50,6 +51,8 @@ namespace ZiyaretciTakipAPI.Controllers
         [HttpGet("active")]
         public async Task<IActionResult> GetActiveVisitors()
         {
+            // Redis cache temporarily disabled
+            /*
             const string cacheKey = "active_visitors";
             var cachedVisitors = await _cacheService.GetAsync<List<Visitor>>(cacheKey);
             if (cachedVisitors != null)
@@ -61,12 +64,14 @@ namespace ZiyaretciTakipAPI.Controllers
                     data = cachedVisitors
                 });
             }
+            */
 
             var activeVisitors = await _context.Visitors
                 .Where(v => v.ExitedAt == null)
                 .ToListAsync();
 
-            await _cacheService.SetAsync(cacheKey, activeVisitors, TimeSpan.FromMinutes(5));
+            // Redis cache temporarily disabled
+            // await _cacheService.SetAsync("active_visitors", activeVisitors, TimeSpan.FromMinutes(5));
 
             return Ok(new
             {
@@ -104,8 +109,8 @@ namespace ZiyaretciTakipAPI.Controllers
             visitor.ExitedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
             
-            // 🔥 Cache'i temizle (bir sonraki istek taze veri çeksin)
-            await _cacheService.RemoveAsync("active_visitors");
+            // Redis cache temporarily disabled
+            // await _cacheService.RemoveAsync("active_visitors");
 
             return Ok(new
             {
