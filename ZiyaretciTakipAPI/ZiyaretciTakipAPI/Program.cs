@@ -48,10 +48,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
-        policy.WithOrigins(
-            "https://ziyaretci-takip-sistemi.vercel.app",
-            "https://ziyaretci-takip-sistemi-11x397if0-dogukan-caykirans-projects.vercel.app"
-        )
+        policy.SetIsOriginAllowed(origin =>
+        {
+            var host = new Uri(origin).Host;
+            return host.EndsWith("vercel.app") || 
+                   host.EndsWith("localhost") || 
+                   host.EndsWith("localhost:3000");
+        })
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials());
