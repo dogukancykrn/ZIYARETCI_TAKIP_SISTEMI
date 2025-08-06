@@ -44,15 +44,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// 🌐 CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowReactApp", policy =>
-        policy.SetIsOriginAllowed(origin => new Uri(origin).Host.EndsWith("vercel.app"))
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials());
-});
+// 🌐 CORS - Disabled
+// builder.Services.AddCors(options =>
+// {
+//     options.AddPolicy("AllowReactApp", policy =>
+//         policy.SetIsOriginAllowed(origin => new Uri(origin).Host.EndsWith("vercel.app"))
+//               .AllowAnyHeader()
+//               .AllowAnyMethod()
+//               .AllowCredentials());
+// });
 
 // 🔎 Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -68,7 +68,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowReactApp");
+// app.UseCors("AllowReactApp"); // CORS disabled
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
