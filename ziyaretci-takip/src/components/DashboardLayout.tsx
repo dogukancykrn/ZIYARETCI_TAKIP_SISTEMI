@@ -96,15 +96,14 @@ const DashboardLayout: React.FC = () => {
           items={menuItems}
           onClick={({ key }) => navigate(key)}
         />
-        <div style={{ textAlign: 'center', marginTop: 24 }}>
+        <div style={{ textAlign: 'center', marginTop: 'auto', paddingBottom: 16 }}>
           <Switch
             checked={isDarkMode}
             onChange={toggleDarkMode}
-            checkedChildren={<BulbOutlined />}
-            unCheckedChildren={<BulbOutlined />}
+            style={{ marginBottom: 8 }}
           />
-          <div style={{ color: 'white', fontSize: 12, marginTop: 4 }}>
-            {isDarkMode ? 'Dark Mode' : 'Light Mode'}
+          <div style={{ color: 'white', fontSize: 11, opacity: 0.8 }}>
+            {isDarkMode ? 'Dark' : 'Light'}
           </div>
         </div>
       </Sider>

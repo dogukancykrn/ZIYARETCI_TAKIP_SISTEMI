@@ -1,16 +1,14 @@
 import axios, { AxiosResponse } from 'axios';
 import { Admin, Visitor, LoginFormData, VisitorFormData, AuthResponse, ApiResponse, VisitorFilter } from '../types';
 
-// Base API URL
-const API_BASE_URL = 'https://ziyaretcitakipapi-production.up.railway.app/api';
-
 // Axios instance oluşturun
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true
 });
 
 // Request interceptor - Her istekte token ekler
@@ -45,7 +43,7 @@ export const authService = {
   // Admin login
   login: async (loginData: LoginFormData): Promise<AuthResponse> => {
     console.log('authService.login çağrıldı:', loginData);
-    console.log('API URL:', API_BASE_URL);
+    console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
     
     try {
       const response: AxiosResponse<any> = await api.post('/auth/login', loginData);
