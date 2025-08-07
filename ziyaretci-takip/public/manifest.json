@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Ziyaretci Takip",
+  "name": "Ziyaretci Takip Sistemi",
   "icons": [
     {
       "src": "favicon.ico",
