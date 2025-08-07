@@ -2,12 +2,12 @@ import axios, { AxiosResponse } from 'axios';
 import { Admin, Visitor, LoginFormData, VisitorFormData, AuthResponse, ApiResponse, VisitorFilter } from '../types';
 
 // Axios instance oluşturun
-if (!process.env.REACT_APP_API_URL) {
-  console.error('REACT_APP_API_URL is not set!');
+if (!process.env.NEXT_PUBLIC_API_URL) {
+  console.error('NEXT_PUBLIC_API_URL is not set!');
 }
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ export const authService = {
   // Admin login
   login: async (loginData: LoginFormData): Promise<AuthResponse> => {
     console.log('authService.login çağrıldı:', loginData);
-    console.log('API URL:', process.env.REACT_APP_API_URL);
+    console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
     
     try {
       const response: AxiosResponse<any> = await api.post('/auth/login', loginData);
