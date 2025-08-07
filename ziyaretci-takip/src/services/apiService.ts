@@ -2,9 +2,9 @@ import axios, { AxiosResponse } from 'axios';
 import { Admin, Visitor, LoginFormData, VisitorFormData, AuthResponse, ApiResponse, VisitorFilter } from '../types';
 
 // Axios instance oluşturun
-if (!process.env.NEXT_PUBLIC_API_URL) {
+/*if (!process.env.NEXT_PUBLIC_API_URL) {
   console.error('NEXT_PUBLIC_API_URL is not set!');
-}
+}*/
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
