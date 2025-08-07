@@ -3,7 +3,7 @@ import { Form, Input, Button, Card, Typography, Alert, Space, Switch } from 'ant
 import { UserOutlined, LockOutlined, SunOutlined, MoonOutlined } from '@ant-design/icons';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { authService } from '../services/apiService';
+import { authService } from '../services';
 import { LoginFormData } from '../types';
 import { useNavigate } from 'react-router-dom';
 

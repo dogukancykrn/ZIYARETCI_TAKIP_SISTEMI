@@ -3,7 +3,7 @@ import { Form, Input, Button, Card, Typography, Alert, Space, Switch } from 'ant
 import { UserOutlined, LockOutlined, MailOutlined, PhoneOutlined, IdcardOutlined, SaveOutlined, ArrowLeftOutlined, SunOutlined, MoonOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
-import { authService } from '../services/apiService';
+import { authService } from '../services';
 
 const { Title } = Typography;
 

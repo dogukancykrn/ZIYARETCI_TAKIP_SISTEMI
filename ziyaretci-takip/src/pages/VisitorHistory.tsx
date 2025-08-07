@@ -4,7 +4,7 @@ import { ReloadOutlined, SearchOutlined, ClearOutlined, DownloadOutlined, FileEx
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { visitorService } from '../services/apiService';
+import { visitorService } from '../services';
 import { Visitor } from '../types';
 
 const { Title } = Typography;

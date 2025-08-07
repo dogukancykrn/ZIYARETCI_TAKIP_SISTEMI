@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, Row, Col, Statistic, Button, Space, Typography, Table, Tag, message } from 'antd';
 import { UserOutlined, LoginOutlined, LogoutOutlined, ClockCircleOutlined, PlusOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { visitorService } from '../services/apiService';
+import { visitorService } from '../services';
 import { Visitor } from '../types';
 import { useAuth } from '../context/AuthContext';
 

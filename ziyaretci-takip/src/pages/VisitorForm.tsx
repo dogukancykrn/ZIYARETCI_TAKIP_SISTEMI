@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Card, Typography, Space, Alert } from 'antd';
 import { UserOutlined, IdcardOutlined, SaveOutlined, ArrowLeftOutlined } from '@ant-design/icons';
-import { visitorService } from '../services/apiService';
+import { visitorService } from '../services';
 import { VisitorFormData } from '../types';
 
 
