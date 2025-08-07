@@ -12,7 +12,10 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true
+  withCredentials: true,
+  validateStatus: function (status) {
+    return status >= 200 && status < 500;
+  }
 });
 
 // Request interceptor - Her istekte token ekler
