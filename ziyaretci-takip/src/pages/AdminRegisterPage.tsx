@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Card, Typography, Alert, Space, Switch } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined, PhoneOutlined, IdcardOutlined, SaveOutlined, ArrowLeftOutlined, SunOutlined, MoonOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Card, Typography, Space, Switch, Alert } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { authService } from '../services';
@@ -15,6 +15,7 @@ interface AdminRegisterFormData {
   phoneNumber: string;
   password: string;
   confirmPassword: string;
+  managerEmail: string;
 }
 
 const AdminRegisterPage: React.FC = () => {
@@ -28,15 +29,15 @@ const AdminRegisterPage: React.FC = () => {
   const onFinish = async (values: AdminRegisterFormData) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       await authService.registerAdmin(values);
       setSuccess(true);
       form.resetFields();
-      
-      // 3 saniye sonra login sayfasına yönlendir
+
+      // 3 saniye sonra dashboard sayfasına yönlendir
       setTimeout(() => {
-        navigate('/login');
+        navigate('/dashboard/home');
       }, 3000);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Kayıt başarısız. Lütfen bilgilerinizi kontrol edin.');
@@ -49,7 +50,7 @@ const AdminRegisterPage: React.FC = () => {
   const backgroundGradient = isDarkMode 
     ? 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 25%, #1f1f1f 50%, #262626 75%, #1a1a1a 100%)'
     : 'linear-gradient(135deg, #8B0000 0%, #DC143C 25%, #B22222 50%, #8B0000 75%, #A52A2A 100%)';
-  
+
   const cardBackground = isDarkMode ? 'rgba(40, 40, 40, 0.97)' : 'rgba(255,255,255,0.97)';
   const cardBorder = isDarkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(255,255,255,0.2)';
 
@@ -93,7 +94,7 @@ const AdminRegisterPage: React.FC = () => {
         borderRadius: '50%',
         animation: 'float 6s ease-in-out infinite'
       }}></div>
-      
+
       <div style={{
         position: 'absolute',
         bottom: '10%',
@@ -123,6 +124,9 @@ const AdminRegisterPage: React.FC = () => {
             <Typography.Text type="secondary" style={{ color: isDarkMode ? '#bfbfbf' : 'inherit' }}>
               Banka Yönetici Hesabı Oluşturun
             </Typography.Text>
+            <div style={{ marginTop: '10px', color: isDarkMode ? '#bfbfbf' : '#8B0000', fontSize: '13px' }}>
+              Not: Kayıt işlemi tamamlandığında, girilen şube müdürü e-posta adresine bilgilendirme mesajı gönderilecektir.
+            </div>
           </div>
 
           {error && (
@@ -137,7 +141,7 @@ const AdminRegisterPage: React.FC = () => {
 
           {success && (
             <Alert
-              message="Yönetici hesabı başarıyla oluşturuldu! Giriş sayfasına yönlendiriliyorsunuz..."
+              message="Yönetici hesabı başarıyla oluşturuldu! Dashboard sayfasına yönlendiriliyorsunuz..."
               type="success"
               showIcon
             />
@@ -227,6 +231,22 @@ const AdminRegisterPage: React.FC = () => {
                 size="large"
               />
             </Form.Item>
+            
+            <Form.Item
+              label="Şube Müdürü E-posta"
+              name="managerEmail"
+              rules={[
+                { required: true, message: 'Şube müdürü e-posta adresi gerekli!' },
+                { type: 'email', message: 'Geçerli bir e-posta adresi girin!' }
+              ]}
+              tooltip="Yeni yönetici kaydı yapıldığında bildirim bu e-posta adresine gönderilecektir. Bağlı olduğunuz şube müdürünün e-posta adresini girin."
+            >
+              <Input 
+                prefix={<MailOutlined />} 
+                placeholder="subemuduru@banka.com"
+                size="large"
+              />
+            </Form.Item>
 
             <Form.Item
               label="Şifre"
@@ -272,7 +292,7 @@ const AdminRegisterPage: React.FC = () => {
                   type="default" 
                   icon={<ArrowLeftOutlined />}
                   size="large"
-                  onClick={() => navigate('/login')}
+                  onClick={() => navigate('/dashboard/home')}
                   style={{ flex: 1 }}
                 >
                   Geri

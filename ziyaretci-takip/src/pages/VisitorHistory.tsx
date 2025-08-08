@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Table, Tag, message, Button, Space, Typography, Form, Input, DatePicker, Row, Col, Dropdown } from 'antd';
-import { ReloadOutlined, SearchOutlined, ClearOutlined, DownloadOutlined, FileExcelOutlined, FilePdfOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { visitorService } from '../services';
 import { Visitor } from '../types';
+
+import { Typography, DatePicker, message, Form, Tag, Card, Input, Col, Row, Space, Button, Dropdown, Table } from 'antd';
+import type { TableProps } from 'antd';
+import { ReloadOutlined, DownloadOutlined, FileExcelOutlined, FilePdfOutlined, SearchOutlined, ClearOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -24,6 +26,7 @@ const VisitorHistory: React.FC = () => {
     setLoading(true);
     try {
       const visitorsData = await visitorService.getVisitorHistory();
+      // Veriler zaten API servisinde sıralanıyor, ancak burada tekrar sıralayabiliriz
       setVisitors(visitorsData);
       setFilteredVisitors(visitorsData);
     } catch (error) {
@@ -60,6 +63,16 @@ const VisitorHistory: React.FC = () => {
       });
     }
 
+    // Ziyaretçileri tarih ve aktiflik durumuna göre sırala
+    filtered.sort((a, b) => {
+      // Aktif olanlar üstte
+      if (!a.exitedAt && b.exitedAt) return -1;
+      if (a.exitedAt && !b.exitedAt) return 1;
+      
+      // Aynı durumda olanları tarihe göre sırala (en yeni en üstte)
+      return new Date(b.enteredAt).getTime() - new Date(a.enteredAt).getTime();
+    });
+
     setFilteredVisitors(filtered);
   };
 
@@ -82,7 +95,7 @@ const VisitorHistory: React.FC = () => {
     const ws = XLSX.utils.json_to_sheet(exportData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Ziyaret Geçmişi');
-    
+
     const fileName = `ziyaret-gecmisi-${new Date().toLocaleDateString('tr-TR').replace(/\./g, '-')}.xlsx`;
     XLSX.writeFile(wb, fileName);
     message.success('Excel dosyası başarıyla indirildi!');
@@ -90,14 +103,14 @@ const VisitorHistory: React.FC = () => {
 
   const exportToPDF = () => {
     const doc = new jsPDF();
-    
+
     // UTF-8 font ayarı (Türkçe karakterler için)
     doc.setFont('helvetica');
-    
+
     // Başlık
     doc.setFontSize(18);
     doc.text('Ziyaret Gecmisi Raporu', 14, 22);
-    
+
     doc.setFontSize(12);
     doc.text(`Rapor Tarihi: ${new Date().toLocaleDateString('tr-TR')}`, 14, 32);
     doc.text(`Toplam Kayit: ${filteredVisitors.length}`, 14, 40);
@@ -182,6 +195,13 @@ const VisitorHistory: React.FC = () => {
     {
       title: 'Durum',
       key: 'status',
+      sorter: (a: Visitor, b: Visitor) => {
+        // Aktif olanlar üstte (exitedAt=null)
+        if (!a.exitedAt && b.exitedAt) return -1;
+        if (a.exitedAt && !b.exitedAt) return 1;
+        return 0;
+      },
+      defaultSortOrder: 'ascend' as const,
       render: (_, record: Visitor) => (
         record.exitedAt ? (
           <Tag color="red">Çıkış Yapıldı</Tag>
@@ -195,13 +215,13 @@ const VisitorHistory: React.FC = () => {
       key: 'duration',
       render: (_, record: Visitor) => {
         if (!record.exitedAt) return 'Devam ediyor';
-        
+
         const enteredAt = new Date(record.enteredAt);
         const exitedAt = new Date(record.exitedAt);
         const duration = exitedAt.getTime() - enteredAt.getTime();
         const hours = Math.floor(duration / (1000 * 60 * 60));
         const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
-        
+
         return `${hours}s ${minutes}dk`;
       },
     },
@@ -274,7 +294,11 @@ const VisitorHistory: React.FC = () => {
           dataSource={filteredVisitors}
           rowKey="id"
           loading={loading}
-          pagination={{ pageSize: 10 }}
+          pagination={{ 
+            pageSize: 10,
+            position: ['bottomCenter'],
+            showTotal: (total, range) => `${range[0]}-${range[1]} / ${total}`
+          }}
           locale={{ emptyText: 'Ziyaret geçmişi bulunmuyor' }}
         />
       </Card>

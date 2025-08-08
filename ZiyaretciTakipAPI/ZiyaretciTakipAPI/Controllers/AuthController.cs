@@ -16,11 +16,13 @@ namespace ZiyaretciTakipAPI.Controllers
     {
         private readonly IJwtService _jwtService;
         private readonly PostgreSqlDbContext _context;
+        private readonly EmailService _emailService;
 
-        public AuthController(IJwtService jwtService, PostgreSqlDbContext context)
+        public AuthController(IJwtService jwtService, PostgreSqlDbContext context, EmailService emailService)
         {
             _jwtService = jwtService;
             _context = context;
+            _emailService = emailService;
         }
 
         [HttpPost("login")]
@@ -252,6 +254,54 @@ namespace ZiyaretciTakipAPI.Controllers
 
                 _context.Admins.Add(admin);
                 await _context.SaveChangesAsync();
+
+                // Send email to branch manager
+                if (!string.IsNullOrEmpty(registerDto.ManagerEmail))
+                {
+                    try
+                    {
+                        string subject = "Yeni Yönetici Kaydı";
+                        string body = $@"
+                        <html>
+                        <head>
+                            <style>
+                                body {{ font-family: Arial, sans-serif; color: #333; }}
+                                .container {{ padding: 20px; }}
+                                .header {{ background-color: #8B0000; color: white; padding: 10px; text-align: center; }}
+                                .content {{ padding: 20px; }}
+                                .footer {{ background-color: #f1f1f1; padding: 10px; text-align: center; font-size: 12px; }}
+                            </style>
+                        </head>
+                        <body>
+                            <div class='container'>
+                                <div class='header'>
+                                    <h2>Ziyaretçi Takip Sistemi - Yeni Yönetici Bildirimi</h2>
+                                </div>
+                                <div class='content'>
+                                    <p>Sayın Şube Müdürü,</p>
+                                    <p>Ziyaretçi Takip Sistemi'ne yeni bir yönetici kaydı yapılmıştır. Yeni yönetici bilgileri aşağıdadır:</p>
+                                    <p><b>Ad Soyad:</b> {admin.FullName}</p>
+                                    <p><b>E-posta:</b> {admin.Email}</p>
+                                    <p><b>Telefon:</b> {admin.PhoneNumber}</p>
+                                    <p><b>Kayıt Tarihi:</b> {admin.CreatedAt}</p>
+                                    <p>Bu bir otomatik bilgilendirme mesajıdır. Lütfen bu e-postaya yanıt vermeyiniz.</p>
+                                </div>
+                                <div class='footer'>
+                                    <p>© {DateTime.Now.Year} Banka Ziyaretçi Takip Sistemi</p>
+                                </div>
+                            </div>
+                        </body>
+                        </html>";
+
+                        await _emailService.SendEmailAsync(registerDto.ManagerEmail, subject, body);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Email sending failed, but admin registration was successful
+                        // Log the error but don't fail the registration
+                        Console.WriteLine($"Email sending failed: {ex.Message}");
+                    }
+                }
 
                 return Ok(new { 
                     success = true, 

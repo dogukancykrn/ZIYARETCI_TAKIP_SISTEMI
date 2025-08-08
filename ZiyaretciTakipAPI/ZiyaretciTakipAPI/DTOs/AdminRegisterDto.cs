@@ -9,5 +9,6 @@ namespace ZiyaretciTakipAPI.DTOs
         public required string PhoneNumber { get; set; }
         public required string Password { get; set; }
         public required string ConfirmPassword { get; set; }
+        public required string ManagerEmail { get; set; }
     }
 }

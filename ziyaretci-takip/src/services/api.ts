@@ -1,17 +1,18 @@
 import axios from "axios";
 
-// Konsolda kontrol et
-console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
+// API URL ayarı - backend port 5160'ta çalışıyor
+const API_URL = '';  // Proxy kullanıldığı için baseURL boş kalabilir
+console.log("Proxy ile API kullanılıyor (Port 5160)");
 
-export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL, // sadece path kullanabilmek için
+export const API = axios.create({
+  baseURL: API_URL, 
   withCredentials: true,
   timeout: 15000,
   headers: { "Content-Type": "application/json" },
 });
 
 // Request interceptor - Her istekte token ekler
-api.interceptors.request.use(
+API.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
     if (token) config.headers.Authorization = `Bearer ${token}`;

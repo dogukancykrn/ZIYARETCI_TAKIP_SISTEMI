@@ -145,3 +145,8 @@ C:\Users\dcaykiran\Desktop\ziyaretci-takip-2\ZiyaretciTakipAPI\ZiyaretciTakipAPI
 C:\Users\dcaykiran\Desktop\ziyaretci-takip-2\ZiyaretciTakipAPI\ZiyaretciTakipAPI\bin\Debug\net8.0\ZiyaretciTakipAPI.pdb
 C:\Users\dcaykiran\Desktop\ziyaretci-takip-2\ZiyaretciTakipAPI\ZiyaretciTakipAPI\obj\Debug\net8.0\ZiyaretciTakipAPI.genruntimeconfig.cache
 C:\Users\dcaykiran\Desktop\ziyaretci-takip-2\ZiyaretciTakipAPI\ZiyaretciTakipAPI\obj\Debug\net8.0\ref\ZiyaretciTakipAPI.dll
+C:\Users\dcaykiran\Desktop\ziyaretci-takip-2\ZiyaretciTakipAPI\ZiyaretciTakipAPI\bin\Debug\net8.0\BouncyCastle.Cryptography.dll
+C:\Users\dcaykiran\Desktop\ziyaretci-takip-2\ZiyaretciTakipAPI\ZiyaretciTakipAPI\bin\Debug\net8.0\MailKit.dll
+C:\Users\dcaykiran\Desktop\ziyaretci-takip-2\ZiyaretciTakipAPI\ZiyaretciTakipAPI\bin\Debug\net8.0\MimeKit.dll
+C:\Users\dcaykiran\Desktop\ziyaretci-takip-2\ZiyaretciTakipAPI\ZiyaretciTakipAPI\bin\Debug\net8.0\System.Security.Cryptography.Pkcs.dll
+C:\Users\dcaykiran\Desktop\ziyaretci-takip-2\ZiyaretciTakipAPI\ZiyaretciTakipAPI\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll

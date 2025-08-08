@@ -32,6 +32,10 @@ builder.Services.AddDbContext<PostgreSqlDbContext>(options =>
            .ConfigureWarnings(warnings =>
                warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 
+// Email Service
+builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<MailKitEmailService>();
+
 // JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings["SecretKey"] ?? "DefaultSecretKeyForDevelopment123456789";

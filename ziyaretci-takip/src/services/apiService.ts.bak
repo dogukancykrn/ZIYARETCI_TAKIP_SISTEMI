@@ -1,14 +1,14 @@
 import { AxiosResponse } from "axios";
-import { Admin, Visitor, LoginFormData, VisitorFormData, AuthResponse } from "../types"; // Adjust the path as needed
-import { API } from './api';
+import { Admin, Visitor, LoginFormData, VisitorFormData, AuthRespo// Yeni ziyaretçi ekle
+  createVisitor: async (visitorData: VisitorFormData): Promise<Visitor> => {
+    const response: AxiosResponse<any> = await API.post('/api/visitor', visitorData);
+    return response.data.data; // Backend { success, message, data } formatında döndürüyor
+  },
 
-// Define VisitorFilter if not imported from types
-export interface VisitorFilter {
-  startDate?: string;
-  endDate?: string;
-  tcNumber?: string;
-  [key: string]: any;
-}
+  // Aktif ziyaretçileri getir (çıkış yapmamış olanlar)
+  getActiveVisitors: async (): Promise<Visitor[]> => {
+    const response: AxiosResponse<any> = await API.get('/api/visitor/active');esponse, VisitorFilter } from '../types';
+import { API } from './api';
 
 interface IAuthService {
   login(loginData: LoginFormData): Promise<AuthResponse>;
@@ -40,20 +40,19 @@ export const authService: IAuthService = {
       const response: AxiosResponse<any> = await API.post('/api/auth/login', loginData);
       console.log('API yanıt:', response.data);
       
-      // API success, message, data formatında yanıt dönüyor
-      if (!response.data?.success || !response.data?.data?.token) {
+      if (!response.data || !response.data.token) {
         throw new Error('Invalid response format from server');
       }
 
       // Backend'den gelen datayı AuthResponse'a dönüştür
       const authResponse: AuthResponse = {
-        token: response.data.data.token,
+        token: response.data.token,
         admin: {
-          id: response.data.data.admin.id,
-          fullName: response.data.data.admin.fullName,
-          phoneNumber: response.data.data.admin.phoneNumber,
-          email: response.data.data.admin.email,
-          role: response.data.data.admin.role || 'user'
+          id: response.data.admin.id,
+          fullName: response.data.admin.fullName,
+          phoneNumber: response.data.admin.phoneNumber,
+          email: response.data.admin.email,
+          role: response.data.admin.role || 'user'
         }
       };
       
@@ -100,7 +99,6 @@ export const authService: IAuthService = {
     phoneNumber: string;
     password: string;
     confirmPassword: string;
-    managerEmail: string;
   }): Promise<{ success: boolean; message: string; data: any }> => {
     try {
       const response: AxiosResponse<any> = await API.post('/api/auth/register-admin', adminData);
@@ -128,28 +126,12 @@ export const visitorService: IVisitorService = {
 
   // Tüm ziyaretçi geçmişini getir
   getVisitorHistory: async (filters?: VisitorFilter): Promise<Visitor[]> => {
-    try {
-      let response: AxiosResponse<any>;
-      
-      if (filters) {
-        response = await API.post('/api/visitor/filter', filters);
-      } else {
-        response = await API.get('/api/visitor/history');
-      }
-      
-      // Sonuçları tersine çevir (en yeni en üstte olacak)
-      const visitors = response.data.data || [];
-      return visitors.sort((a: Visitor, b: Visitor) => {
-        // Önce aktif ziyaretçileri göster (çıkış yapmamış olanlar)
-        if (!a.exitedAt && b.exitedAt) return -1;
-        if (a.exitedAt && !b.exitedAt) return 1;
-        
-        // Aynı durumdakileri tarihe göre sırala (yeni → eski)
-        return new Date(b.enteredAt).getTime() - new Date(a.enteredAt).getTime();
-      });
-    } catch (error) {
-      console.error('Ziyaretçi geçmişi alınamadı:', error);
-      return [];
+    if (filters) {
+      const response: AxiosResponse<any> = await API.post('/api/visitor/filter', filters);
+      return response.data.data;
+    } else {
+      const response: AxiosResponse<any> = await API.get('/api/visitor/history');
+      return response.data.data;
     }
   },
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Row, Col, Statistic, Button, Space, Typography, Table, Tag, message } from 'antd';
 import { UserOutlined, LoginOutlined, LogoutOutlined, ClockCircleOutlined, PlusOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
@@ -31,15 +31,15 @@ const Dashboard: React.FC = () => {
         visitorService.getActiveVisitors(),
         visitorService.getVisitorHistory()
       ]);
-      
+
       setActiveVisitors(activeVisitorsData);
-      
+
       // İstatistikleri hesapla
       const today = new Date().toDateString();
       const todayVisits = allVisitorsData.filter(v => 
         new Date(v.enteredAt).toDateString() === today
       ).length;
-      
+
       setStats({
         totalActive: activeVisitorsData.length,
         todayVisits: todayVisits,

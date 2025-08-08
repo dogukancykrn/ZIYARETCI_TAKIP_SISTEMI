@@ -11,6 +11,8 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   DashboardOutlined,
+  UserOutlined,
+  UserSwitchOutlined
 } from '@ant-design/icons';
 import { useAuth } from '../context/AuthContext';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
@@ -34,11 +36,20 @@ const DashboardLayout: React.FC = () => {
     navigate('/dashboard/profile');
   };
 
+  const handleAdminRegister = () => {
+    navigate('/admin-register');
+  };
+
   const userMenuItems = [
     {
       key: 'profile',
-      icon: <UserAddOutlined />,
+      icon: <UserOutlined />,
       label: 'Profil',
+    },
+    {
+      key: 'admin-register',
+      icon: <UserSwitchOutlined />,
+      label: 'Yeni Yönetici Ekle',
     },
     {
       key: 'logout',
@@ -128,6 +139,7 @@ const DashboardLayout: React.FC = () => {
                 items: userMenuItems,
                 onClick: ({ key }) => {
                   if (key === 'profile') handleProfileClick();
+                  if (key === 'admin-register') handleAdminRegister();
                   if (key === 'logout') handleLogout();
                 },
               }}

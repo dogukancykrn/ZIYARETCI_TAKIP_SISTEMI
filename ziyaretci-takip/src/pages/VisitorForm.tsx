@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Card, Typography, Space, Alert } from 'antd';
-import { UserOutlined, IdcardOutlined, SaveOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { UserOutlined, IdcardOutlined, SaveOutlined, ArrowLeftOutlined, MailOutlined } from '@ant-design/icons';
 import { visitorService } from '../services';
 import { VisitorFormData } from '../types';
+
+const { Text } = Typography;
 
 
 const VisitorForm: React.FC = () => {
@@ -51,10 +53,15 @@ const VisitorForm: React.FC = () => {
   return (
     <div style={{ padding: '20px' }}>
       <Card title="Yeni Ziyaretçi Kaydı" style={{ maxWidth: '600px', margin: '0 auto' }}>
+        <div style={{ marginBottom: 16, display: 'flex', alignItems: 'center' }}>
+          <MailOutlined style={{ color: '#8B0000', fontSize: 16, marginRight: 8 }} />
+          <Text type="secondary">Her ziyaretçi kaydında sistem yöneticisine otomatik bildirim e-postası gönderilir.</Text>
+        </div>
+        
         {success && lastRegisteredVisitor && (
           <Alert 
             message="Başarılı!"
-            description={`${lastRegisteredVisitor} isimli ziyaretçi başarıyla kaydedildi.`}
+            description={`${lastRegisteredVisitor} isimli ziyaretçi başarıyla kaydedildi. Sistem yöneticisine otomatik olarak bildirim e-postası gönderilmiştir.`}
             type="success" 
             showIcon 
             style={{ marginBottom: 16 }} 
@@ -93,7 +100,7 @@ const VisitorForm: React.FC = () => {
               {
                 validator: async (_, value) => {
                   if (!value || value.length !== 11) return;
-                  
+
                   // İlk hane 0 olamaz
                   if (value[0] === '0') {
                     throw new Error('TC Kimlik numarası 0 ile başlayamaz!');
