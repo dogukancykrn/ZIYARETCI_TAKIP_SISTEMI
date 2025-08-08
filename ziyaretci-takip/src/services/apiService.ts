@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import { Admin, Visitor, LoginFormData, VisitorFormData, AuthResponse, ApiResponse, VisitorFilter } from '../types';
-import API from './api';
+import { api } from './api';
 
 interface IAuthService {
   login(loginData: LoginFormData): Promise<AuthResponse>;
@@ -29,7 +29,7 @@ export const authService: IAuthService = {
     console.log('authService.login çağrıldı:', loginData);
     
     try {
-      const response: AxiosResponse<any> = await API.post('/api/auth/login', loginData);
+      const response: AxiosResponse<any> = await api.post('/api/auth/login', loginData);
       console.log('API yanıt:', response.data);
       
       if (!response.data || !response.data.token) {
@@ -57,13 +57,13 @@ export const authService: IAuthService = {
 
   // Logout
   logout: async (): Promise<void> => {
-    await API.post('/auth/logout');
+    await api.post('/auth/logout');
   },
 
   // Update Profile
   updateProfile: async (profileData: { fullName: string; email: string; phoneNumber: string }): Promise<Admin> => {
     try {
-      const response: AxiosResponse<any> = await API.put('/auth/profile', profileData);
+      const response: AxiosResponse<any> = await api.put('/auth/profile', profileData);
       return response.data.admin;
     } catch (error) {
       console.error('Profil güncelleme hatası:', error);
@@ -74,7 +74,7 @@ export const authService: IAuthService = {
   // Change Password
   changePassword: async (data: { currentPassword: string; newPassword: string }): Promise<{ success: boolean; message: string }> => {
     try {
-      const response: AxiosResponse<any> = await API.post('/auth/change-password', data);
+      const response: AxiosResponse<any> = await api.post('/auth/change-password', data);
       return response.data;
     } catch (error) {
       console.error('Şifre değiştirme hatası:', error);
@@ -93,7 +93,7 @@ export const authService: IAuthService = {
     confirmPassword: string;
   }): Promise<{ success: boolean; message: string; data: any }> => {
     try {
-      const response: AxiosResponse<any> = await API.post('/auth/register-admin', adminData);
+      const response: AxiosResponse<any> = await api.post('/auth/register-admin', adminData);
       return response.data;
     } catch (error) {
       console.error('Admin kayıt hatası:', error);
@@ -106,42 +106,42 @@ export const authService: IAuthService = {
 export const visitorService: IVisitorService = {
   // Yeni ziyaretçi ekle
   createVisitor: async (visitorData: VisitorFormData): Promise<Visitor> => {
-    const response: AxiosResponse<any> = await API.post('/visitor', visitorData);
+    const response: AxiosResponse<any> = await api.post('/visitor', visitorData);
     return response.data.data; // Backend { success, message, data } formatında döndürüyor
   },
 
   // Aktif ziyaretçileri getir (çıkış yapmamış olanlar)
   getActiveVisitors: async (): Promise<Visitor[]> => {
-    const response: AxiosResponse<any> = await API.get('/visitor/active');
+    const response: AxiosResponse<any> = await api.get('/visitor/active');
     return response.data.data; // Backend { success, message, data } formatında döndürüyor
   },
 
   // Tüm ziyaretçi geçmişini getir
   getVisitorHistory: async (filters?: VisitorFilter): Promise<Visitor[]> => {
     if (filters) {
-      const response: AxiosResponse<any> = await API.post('/visitor/filter', filters);
+      const response: AxiosResponse<any> = await api.post('/visitor/filter', filters);
       return response.data.data;
     } else {
-      const response: AxiosResponse<any> = await API.get('/visitor/history');
+      const response: AxiosResponse<any> = await api.get('/visitor/history');
       return response.data.data;
     }
   },
 
   // Ziyaretçi çıkışı
   exitVisitor: async (visitorId: number): Promise<Visitor> => {
-    const response: AxiosResponse<any> = await API.post(`/visitor/${visitorId}/exit`);
+    const response: AxiosResponse<any> = await api.post(`/visitor/${visitorId}/exit`);
     return response.data.data;
   },
 
   // TC ile ziyaretçi çıkışı
   exitVisitorByTC: async (tcNumber: string): Promise<Visitor> => {
-    const response: AxiosResponse<any> = await API.patch(`/visitor/${tcNumber}/exit`);
+    const response: AxiosResponse<any> = await api.patch(`/visitor/${tcNumber}/exit`);
     return response.data.data;
   },
 
   // İstatistikleri getir
   getStatistics: async (): Promise<any> => {
-    const response: AxiosResponse<any> = await API.get('/visitor/statistics');
+    const response: AxiosResponse<any> = await api.get('/visitor/statistics');
     return response.data.data;
   },
 };

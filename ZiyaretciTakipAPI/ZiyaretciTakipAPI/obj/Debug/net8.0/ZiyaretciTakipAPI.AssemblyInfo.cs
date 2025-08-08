@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ZiyaretciTakipAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3ff6971341594619fac6520ddd0c02fa6f6ffce6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e4bb878ebdba9add69b3b171407bbee8ca90d4d8")]
 [assembly: System.Reflection.AssemblyProductAttribute("ZiyaretciTakipAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ZiyaretciTakipAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
