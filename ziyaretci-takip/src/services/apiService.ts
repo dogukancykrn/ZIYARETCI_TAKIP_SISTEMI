@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { Admin, Visitor, LoginFormData, VisitorFormData, AuthResponse, ApiResponse, VisitorFilter } from '../types';
+import { Admin, Visitor, LoginFormData, VisitorFormData, AuthResponse, VisitorFilter } from '../types';
 import { api } from './api';
 
 interface IAuthService {
@@ -29,7 +29,7 @@ export const authService: IAuthService = {
     console.log('authService.login çağrıldı:', loginData);
     
     try {
-      const response: AxiosResponse<any> = await api.post('/api/auth/login', loginData);
+      const response: AxiosResponse<any> = await api.post('/auth/login', loginData);
       console.log('API yanıt:', response.data);
       
       if (!response.data || !response.data.token) {
