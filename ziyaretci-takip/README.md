@@ -1,23 +1,38 @@
-# Getting Started with Create React App
+# Ziyaretçi Takip Sistemi - Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Bu proje, Ziraat Bankası için geliştirilmiş bir ziyaretçi takip sisteminin frontend uygulamasıdır. Create React App ile oluşturulmuştur.
 
-## Available Scripts
+## Proje Hakkında
 
-In the project directory, you can run:
+Bu uygulama, bankanın ziyaretçi giriş-çıkış işlemlerini dijital ortamda takip etmek için geliştirilmiştir. 
+React, TypeScript, Ant Design ve diğer modern web teknolojileri kullanılarak geliştirilmiştir.
+
+## Kullanılan Teknolojiler
+
+- **React 19.1.0** - UI kütüphanesi
+- **TypeScript** - Tip güvenliği için
+- **Ant Design 5.26.6** - UI bileşen kütüphanesi
+- **React Router DOM 7.7.0** - Sayfa yönlendirme
+- **Axios 1.10.0** - HTTP istekleri
+- **jsPDF & jsPDF-AutoTable** - PDF oluşturma
+- **XLSX 0.18.5** - Excel dosya işlemleri
+
+## Kullanılabilir Komutlar
+
+Proje dizininde aşağıdaki komutları çalıştırabilirsiniz:
 
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Uygulamayı geliştirme modunda çalıştırır.\
+Tarayıcınızda [http://localhost:3000](http://localhost:3000) adresini açarak görüntüleyebilirsiniz.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Değişikliklerde sayfa otomatik olarak yenilenir.\
+Konsol'da lint hatalarını da görebilirsiniz.
 
 ### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Test çalıştırıcısını etkileşimli izleme modunda başlatır.\
+Test çalıştırma hakkında daha fazla bilgi için [running tests](https://facebook.github.io/create-react-app/docs/running-tests) bölümüne bakın.
 
 ### `npm run build`
 

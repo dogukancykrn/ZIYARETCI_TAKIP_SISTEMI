@@ -1,50 +1,71 @@
+// React hook'ları ve bileşenleri içe aktarıyoruz
 import React, { useState } from 'react';
+// Ant Design UI bileşenlerini içe aktarıyoruz
 import { Form, Input, Button, Card, Typography, Space, Alert } from 'antd';
+// Ant Design icon'larını içe aktarıyoruz
 import { UserOutlined, IdcardOutlined, SaveOutlined, ArrowLeftOutlined, MailOutlined } from '@ant-design/icons';
-import { visitorService } from '../services';
-import { VisitorFormData } from '../types';
+// API servislerini içe aktarıyoruz
+import { visitorService } from '../services';        // Ziyaretçi API servisleri
+// Tip tanımlarını içe aktarıyoruz
+import { VisitorFormData } from '../types';          // Form veri tipi
 
+// Typography bileşenlerini destructure ediyoruz
 const { Text } = Typography;
 
-
+// Ziyaretçi kayıt formu bileşeni
 const VisitorForm: React.FC = () => {
+  // Form yükleme durumu state'i
   const [loading, setLoading] = useState(false);
+  // Hata mesajı state'i
   const [error, setError] = useState<string | null>(null);
+  // Başarı durumu state'i
   const [success, setSuccess] = useState(false);
+  // Son kaydedilen ziyaretçi adı state'i
   const [lastRegisteredVisitor, setLastRegisteredVisitor] = useState<string | null>(null);
 
-  // Form temizlendiğinde error state'ini sıfırla
+  // Form sıfırlama fonksiyonu - hata ve başarı state'lerini temizler
   const handleReset = () => {
-    setError(null);
-    setSuccess(false);
-    setLastRegisteredVisitor(null);
+    setError(null);                    // Hata mesajını temizle
+    setSuccess(false);                 // Başarı durumunu sıfırla
+    setLastRegisteredVisitor(null);    // Son kayıtlı ziyaretçi bilgisini temizle
   };
 
+  // Form submit edildiğinde çalışan fonksiyon
   const onFinish = async (values: VisitorFormData) => {
-    setLoading(true);
-    setError(null);
+    setLoading(true);   // Yükleme durumunu aktif et
+    setError(null);     // Önceki hataları temizle
 
     try {
+      // Debug amaçlı form verisini konsola yazdır
       console.log('Form verisi gönderiliyor:', values);
+      // API'ye ziyaretçi kayıt isteği gönder
       const result = await visitorService.createVisitor(values);
       console.log('API yanıtı:', result);
-      // Aktif ziyaretçi cache'ini temizle
+      
+      // Cache temizleme - aktif ziyaretçi listesi güncellensin diye
       sessionStorage.removeItem('active_visitors');
+      
+      // Başarı durumunu ayarla
       setSuccess(true);
       setLastRegisteredVisitor(values.fullName);
+      
       // Formu temizle
       form.resetFields();
-      // 2.5 saniye sonra success state'i ve lastRegisteredVisitor'ı resetle
+      
+      // 2.5 saniye sonra başarı mesajını ve ziyaretçi bilgisini temizle
       setTimeout(() => {
         setSuccess(false);
         setLastRegisteredVisitor(null);
       }, 2500);
+      
     } catch (err: any) {
+      // Hata durumunda detaylı log
       console.error('Kayıt hatası:', err);
       console.error('Hata detayı:', err.response);
+      // Kullanıcıya gösterilecek hata mesajını ayarla
       setError(err.response?.data?.message || err.message || 'Kayıt başarısız. Lütfen bilgilerinizi kontrol edin.');
     } finally {
-      setLoading(false);
+      setLoading(false); // Her durumda yükleme durumunu kapat
     }
   };
 

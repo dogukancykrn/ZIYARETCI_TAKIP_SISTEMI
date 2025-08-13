@@ -23,30 +23,67 @@
   to { transform: rotate(360deg); }
 }
 
-/* Login sayfası animasyonları */
+/* ANA UYGULAMA STİLLERİ */
+
+/* Ana App bileşeni container'ı */
+.App {
+  text-align: center; /* İçeriği ortala */
+}
+
+/* Uygulama logosu (şu anda kullanılmıyor) */
+.App-logo {
+  animation: App-logo-spin infinite 20s linear; /* Sürekli dönen animasyon */
+  height: 80px;                                /* Logo yüksekliği */
+}
+
+/* Uygulama header'ı (şu anda kullanılmıyor) */
+.App-header {
+  background-color: #222; /* Koyu gri arkaplan */
+  height: 150px;          /* Header yüksekliği */
+  padding: 20px;          /* İç boşluk */
+  color: white;           /* Beyaz metin rengi */
+}
+
+/* Giriş metni (şu anda kullanılmıyor) */
+.App-intro {
+  font-size: large; /* Büyük font boyutu */
+}
+
+/* KEYFRAME ANİMASYONLARI */
+
+/* Logo döndürme animasyonu */
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }   /* Başlangıç: 0 derece */
+  to { transform: rotate(360deg); }   /* Bitiş: 360 derece */
+}
+
+/* Yüzme animasyonu - dekoratif elementler için */
 @keyframes float {
   0%, 100% {
-    transform: translateY(0px);
+    transform: translateY(0px);   /* Başlangıç ve bitiş konumu */
   }
   50% {
-    transform: translateY(-20px);
+    transform: translateY(-20px); /* Orta nokta: 20px yukarı */
   }
 }
 
+/* Belirme animasyonu - sayfa geçişleri için */
 @keyframes fadeIn {
   from {
-    opacity: 0;
-    transform: translateY(30px);
+    opacity: 0;                    /* Başlangıç: görünmez */
+    transform: translateY(30px);   /* 30px aşağıdan başla */
   }
   to {
-    opacity: 1;
-    transform: translateY(0);
+    opacity: 1;                    /* Bitiş: tamamen görünür */
+    transform: translateY(0);      /* Normal konuma gel */
   }
 }
 
-/* Login card animasyonu */
+/* LOGIN SAYFASI STİLLERİ */
+
+/* Login kartı için belirme animasyonu */
 .login-card {
-  animation: fadeIn 0.8s ease-out;
+  animation: fadeIn 0.8s ease-out; /* 0.8 saniye yumuşak belirme */
 }
 
 /* Gradient arka plan animasyonu */

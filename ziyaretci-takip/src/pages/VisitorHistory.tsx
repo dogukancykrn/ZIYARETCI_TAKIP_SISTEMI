@@ -1,45 +1,66 @@
+// Excel dosya işlemleri için XLSX kütüphanesini içe aktarıyoruz
 import * as XLSX from 'xlsx';
+// PDF oluşturma için jsPDF kütüphanesini içe aktarıyoruz
 import { jsPDF } from 'jspdf';
+// PDF tabloları için autoTable eklentisini içe aktarıyoruz
 import autoTable from 'jspdf-autotable';
-import { visitorService } from '../services';
-import { Visitor } from '../types';
+// API servislerini içe aktarıyoruz
+import { visitorService } from '../services';     // Ziyaretçi API servisleri
+// Tip tanımlarını içe aktarıyoruz
+import { Visitor } from '../types';               // Ziyaretçi tipi
 
+// Ant Design UI bileşenlerini içe aktarıyoruz
 import { Typography, DatePicker, message, Form, Tag, Card, Input, Col, Row, Space, Button, Dropdown, Table } from 'antd';
+// Ant Design Table tipini içe aktarıyoruz
 import type { TableProps } from 'antd';
+// Ant Design icon'larını içe aktarıyoruz
 import { ReloadOutlined, DownloadOutlined, FileExcelOutlined, FilePdfOutlined, SearchOutlined, ClearOutlined } from '@ant-design/icons';
+// React hook'ları ve bileşenleri içe aktarıyoruz
 import React, { useState, useEffect } from 'react';
 
+// Typography ve DatePicker bileşenlerini destructure ediyoruz
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
 
+// Ziyaretçi geçmişi ve raporlama bileşeni
 const VisitorHistory: React.FC = () => {
+  // Tüm ziyaretçiler listesi state'i
   const [visitors, setVisitors] = useState<Visitor[]>([]);
+  // Filtrelenmiş ziyaretçiler listesi state'i
   const [filteredVisitors, setFilteredVisitors] = useState<Visitor[]>([]);
+  // Veri yükleme durumu state'i
   const [loading, setLoading] = useState(false);
+  // Arama formu hook'u
   const [form] = Form.useForm();
 
+  // Bileşen mount olduğunda ziyaretçi geçmişini yükle
   useEffect(() => {
     loadVisitorHistory();
-  }, []);
+  }, []); // Dependency array boş - sadece mount olduğunda çalış
 
+  // Ziyaretçi geçmişini API'den yükleyen fonksiyon
   const loadVisitorHistory = async () => {
-    setLoading(true);
+    setLoading(true); // Yükleme durumunu aktif et
     try {
+      // API'den tüm ziyaretçi verilerini çek
       const visitorsData = await visitorService.getVisitorHistory();
-      // Veriler zaten API servisinde sıralanıyor, ancak burada tekrar sıralayabiliriz
-      setVisitors(visitorsData);
-      setFilteredVisitors(visitorsData);
+      // Veriler API'de sıralanmış olabilir, burada da sıralayabiliriz
+      setVisitors(visitorsData);           // Ana listeyi güncelle
+      setFilteredVisitors(visitorsData);   // Filtrelenmiş listeyi de güncelle (başlangıçta aynı)
     } catch (error) {
+      // Hata durumunda kullanıcıya mesaj göster
       message.error('Ziyaret geçmişi yüklenemedi!');
     } finally {
-      setLoading(false);
+      setLoading(false); // Her durumda yükleme durumunu kapat
     }
   };
 
+  // Arama/filtreleme fonksiyonu
   const handleSearch = (values: any) => {
+    // Ana listeden kopyala (orijinal veriyi korumak için)
     let filtered = [...visitors];
 
-    // Ad Soyad filtresi
+    // Ad Soyad filtresi - büyük/küçük harf duyarsız arama
     if (values.fullName) {
       filtered = filtered.filter(visitor =>
         visitor.fullName.toLowerCase().includes(values.fullName.toLowerCase())

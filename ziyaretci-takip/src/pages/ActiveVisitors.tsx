@@ -1,61 +1,67 @@
+// React hook'ları ve bileşenleri içe aktarıyoruz
 import React, { useState, useEffect } from 'react';
-import { Card, Table, Button, Tag, message, Typography } from 'antd';
+import { message } from 'antd';
+// Ant Design UI bileşenlerini içe aktarıyoruz
+import { Card, Table, Button, Tag, Typography } from 'antd';
+// Ant Design icon'larını içe aktarıyoruz
 import { LogoutOutlined, ReloadOutlined } from '@ant-design/icons';
-import { visitorService } from '../services/apiService';
-import { Visitor } from '../types';
+// API servislerini içe aktarıyoruz
+import { visitorService } from '../services/apiService';  // Ziyaretçi API servisleri
+// Tip tanımlarını içe aktarıyoruz
+import { Visitor } from '../types';                       // Ziyaretçi tipi
 
+// Typography bileşenlerini destructure ediyoruz
 const { Title } = Typography;
 
+// Aktif ziyaretçiler listesi bileşeni
 const ActiveVisitors: React.FC = () => {
+  // Ant Design dinamik tema ile uyumlu mesaj API
+  const [messageApi, contextHolder] = message.useMessage();
+  // Aktif ziyaretçiler listesi state'i
   const [activeVisitors, setActiveVisitors] = useState<Visitor[]>([]);
+  // Veri yükleme durumu state'i
   const [loading, setLoading] = useState(false);
 
+  // Bileşen mount olduğunda aktif ziyaretçileri API'den tekrar yükle
   useEffect(() => {
     loadActiveVisitors();
   }, []);
 
+  // Aktif ziyaretçileri yükleyen fonksiyon - her zaman API'den güncel veri alır
   const loadActiveVisitors = async () => {
     setLoading(true);
     try {
-      const cached = sessionStorage.getItem("active_visitors");
-
-      if (cached) {
-        setActiveVisitors(JSON.parse(cached));
-        console.log("🟢 Veri sessionStorage'tan geldi");
-      } else {
-        const visitors = await visitorService.getActiveVisitors();
-        setActiveVisitors(visitors);
-        sessionStorage.setItem("active_visitors", JSON.stringify(visitors));
-        console.log("🟢 Veri API'den geldi ve cache'e yazıldı");
-      }
+      const visitors = await visitorService.getActiveVisitors();
+      setActiveVisitors(visitors);
     } catch (error) {
-      message.error('Aktif ziyaretçi bilgileri yüklenemedi!');
+      messageApi.error('Aktif ziyaretçi bilgileri yüklenemedi!');
     } finally {
       setLoading(false);
     }
   };
 
+  // Ziyaretçi çıkışı yapma fonksiyonu
   const handleExitVisitor = async (tcNumber: string) => {
     try {
       await visitorService.exitVisitorByTC(tcNumber);
-      sessionStorage.removeItem("active_visitors"); // 🧽 Cache'i temizle
-      message.success('Ziyaretçi çıkışı başarıyla kaydedildi!');
-      loadActiveVisitors(); // Listeyi yenile
+      messageApi.success('Ziyaretçi çıkışı başarıyla kaydedildi!');
+      loadActiveVisitors();
     } catch (error) {
-      message.error('Çıkış işlemi başarısız!');
+      messageApi.error('Çıkış işlemi başarısız!');
     }
   };
 
+  // Tablo kolonları tanımı
   const columns = [
     {
-      title: 'Ad Soyad',
-      dataIndex: 'fullName',
-      key: 'fullName',
+      title: 'Ad Soyad',              // Kolon başlığı
+      dataIndex: 'fullName',         // Veri kaynağındaki alan adı
+      key: 'fullName',               // Benzersiz kolon anahtarı
     },
     {
-      title: 'TC Kimlik No',
-      dataIndex: 'tcNumber',
-      key: 'tcNumber',
+      title: 'TC Kimlik No',         // Kolon başlığı
+      dataIndex: 'tcNumber',         // Veri kaynağındaki alan adı
+      key: 'tcNumber',               // Benzersiz kolon anahtarı
     },
     {
       title: 'Ziyaret Nedeni',
@@ -92,15 +98,13 @@ const ActiveVisitors: React.FC = () => {
 
   return (
     <div style={{ padding: '24px' }}>
+      {/* Ant Design dinamik tema ile uyumlu mesaj konteyneri */}
+      {contextHolder}
       <Card>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           <Title level={3} style={{ margin: 0 }}>Aktif Ziyaretçiler</Title>
           <Button 
-            icon={<ReloadOutlined />} 
-            onClick={() => {
-              sessionStorage.removeItem("active_visitors"); // ❗️Yenile butonuna özel: Cache’i de temizlesin
-              loadActiveVisitors();
-            }} 
+            icon={<ReloadOutlined />} onClick={loadActiveVisitors}
             loading={loading}
           >
             Yenile

@@ -1,52 +1,70 @@
+// React hook'ları ve bileşenleri içe aktarıyoruz
 import React, { useState } from 'react';
+// Ant Design icon'larını içe aktarıyoruz
 import { UserOutlined, LockOutlined, MailOutlined, PhoneOutlined, IdcardOutlined, SaveOutlined, ArrowLeftOutlined, SunOutlined, MoonOutlined } from '@ant-design/icons';
+// Ant Design UI bileşenlerini içe aktarıyoruz
 import { Form, Input, Button, Card, Typography, Space, Switch, Alert } from 'antd';
+// React Router navigation hook'unu içe aktarıyoruz
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from '../context/ThemeContext';
-import { authService } from '../services';
+// Context hook'unu içe aktarıyoruz
+import { useTheme } from '../context/ThemeContext';         // Tema yönetimi için
+// API servislerini içe aktarıyoruz
+import { authService } from '../services';                  // Kimlik doğrulama servisleri
 
+// Typography bileşenlerini destructure ediyoruz
 const { Title } = Typography;
 
+// Admin kayıt formu için veri tipi
 interface AdminRegisterFormData {
-  firstName: string;
-  lastName: string;
-  tcNumber: string;
-  email: string;
-  phoneNumber: string;
-  password: string;
-  confirmPassword: string;
-  managerEmail: string;
+  firstName: string;       // Ad
+  lastName: string;        // Soyad
+  tcNumber: string;        // TC kimlik numarası
+  email: string;           // E-posta adresi
+  phoneNumber: string;     // Telefon numarası
+  password: string;        // Şifre
+  confirmPassword: string; // Şifre tekrarı
+  managerEmail: string;    // Şube müdürü e-posta adresi (bildirim için)
 }
 
+// Yeni admin kayıt sayfası bileşeni
 const AdminRegisterPage: React.FC = () => {
+  // Form yükleme durumu state'i
   const [loading, setLoading] = useState(false);
+  // Hata mesajı state'i
   const [error, setError] = useState<string | null>(null);
+  // Başarı durumu state'i
   const [success, setSuccess] = useState(false);
+  // Sayfa yönlendirme hook'u
   const navigate = useNavigate();
+  // Theme context'ten tema durumu ve toggle fonksiyonunu al
   const { isDarkMode, toggleDarkMode } = useTheme();
+  // Form hook'u
   const [form] = Form.useForm();
 
+  // Form submit edildiğinde çalışan fonksiyon
   const onFinish = async (values: AdminRegisterFormData) => {
-    setLoading(true);
-    setError(null);
+    setLoading(true);   // Yükleme durumunu aktif et
+    setError(null);     // Önceki hataları temizle
 
     try {
+      // API'ye admin kayıt isteği gönder
       await authService.registerAdmin(values);
-      setSuccess(true);
-      form.resetFields();
+      setSuccess(true);   // Başarı durumunu aktif et
+      form.resetFields(); // Formu temizle
 
-      // 3 saniye sonra dashboard sayfasına yönlendir
+      // 3 saniye sonra dashboard ana sayfasına yönlendir
       setTimeout(() => {
         navigate('/dashboard/home');
       }, 3000);
     } catch (err: any) {
+      // Hata durumunda kullanıcıya mesaj göster
       setError(err.response?.data?.message || 'Kayıt başarısız. Lütfen bilgilerinizi kontrol edin.');
     } finally {
-      setLoading(false);
+      setLoading(false); // Her durumda yükleme durumunu kapat
     }
   };
 
-  // Dark mode için renkler
+  // Karanlık mod durumuna göre arkaplan gradient'ı
   const backgroundGradient = isDarkMode 
     ? 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 25%, #1f1f1f 50%, #262626 75%, #1a1a1a 100%)'
     : 'linear-gradient(135deg, #8B0000 0%, #DC143C 25%, #B22222 50%, #8B0000 75%, #A52A2A 100%)';

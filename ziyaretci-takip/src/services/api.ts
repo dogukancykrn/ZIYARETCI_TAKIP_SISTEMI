@@ -1,8 +1,8 @@
 import axios from "axios";
 
 // API URL ayarı - backend port 5160'ta çalışıyor
-const API_URL = '';  // Proxy kullanıldığı için baseURL boş kalabilir
-console.log("Proxy ile API kullanılıyor (Port 5160)");
+const API_URL = 'http://localhost:5160/api';  // Direkt backend URL'si
+console.log("API URL:", API_URL);
 
 export const API = axios.create({
   baseURL: API_URL, 

@@ -2,9 +2,9 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ZiyaretciTakipAPI.Data;
 
 #nullable disable
@@ -12,8 +12,8 @@ using ZiyaretciTakipAPI.Data;
 namespace ZiyaretciTakipAPI.Migrations
 {
     [DbContext(typeof(PostgreSqlDbContext))]
-    [Migration("20250726134634_InitialPostgreSQL")]
-    partial class InitialPostgreSQL
+    [Migration("20250811134644_InitialSqlServer")]
+    partial class InitialSqlServer
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,49 +21,70 @@ namespace ZiyaretciTakipAPI.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.7")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("ZiyaretciTakipAPI.Models.Admin", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
+                        .HasColumnType("nvarchar(100)")
                         .HasColumnName("email");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("first_name");
 
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
+                        .HasColumnType("nvarchar(100)")
                         .HasColumnName("full_name");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("last_name");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnName("password_hash");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
+                        .HasColumnType("nvarchar(20)")
                         .HasColumnName("phone_number");
 
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
+                        .HasColumnType("nvarchar(20)")
                         .HasColumnName("role");
+
+                    b.Property<string>("TcNumber")
+                        .IsRequired()
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)")
+                        .HasColumnName("tc_number");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
@@ -71,51 +92,39 @@ namespace ZiyaretciTakipAPI.Migrations
                         .IsUnique();
 
                     b.ToTable("admins", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("a1b2c3d4-e5f6-7890-1234-567890abcdef"),
-                            CreatedAt = new DateTime(2025, 7, 26, 13, 46, 33, 503, DateTimeKind.Utc).AddTicks(6068),
-                            Email = "admin@banka.com",
-                            FullName = "Banka Admin",
-                            PasswordHash = "$2a$11$ZY8fULrFKJYxAiGb0KGo1OzTkJ6v7nPJx8Qc2WdQ1.6z2.K8mY8Ca",
-                            PhoneNumber = "05551234567",
-                            Role = "Admin"
-                        });
                 });
 
             modelBuilder.Entity("ZiyaretciTakipAPI.Models.Visitor", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<DateTime>("EnteredAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnName("entered_at");
 
                     b.Property<DateTime?>("ExitedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnName("exited_at");
 
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
+                        .HasColumnType("nvarchar(100)")
                         .HasColumnName("full_name");
 
                     b.Property<string>("TcNumber")
                         .IsRequired()
                         .HasMaxLength(11)
-                        .HasColumnType("character varying(11)")
+                        .HasColumnType("nvarchar(11)")
                         .HasColumnName("tc_number");
 
                     b.Property<string>("VisitReason")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("visit_reason");
 
                     b.HasKey("Id");
@@ -125,25 +134,6 @@ namespace ZiyaretciTakipAPI.Migrations
                     b.HasIndex("TcNumber");
 
                     b.ToTable("visitors", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("b1b2c3d4-e5f6-7890-1234-567890abcdef"),
-                            EnteredAt = new DateTime(2025, 1, 23, 10, 0, 0, 0, DateTimeKind.Utc),
-                            ExitedAt = new DateTime(2025, 1, 23, 11, 0, 0, 0, DateTimeKind.Utc),
-                            FullName = "Ahmet Yılmaz",
-                            TcNumber = "12345678901",
-                            VisitReason = "Kredi başvurusu"
-                        },
-                        new
-                        {
-                            Id = new Guid("c1b2c3d4-e5f6-7890-1234-567890abcdef"),
-                            EnteredAt = new DateTime(2025, 1, 23, 12, 0, 0, 0, DateTimeKind.Utc),
-                            FullName = "Fatma Kaya",
-                            TcNumber = "98765432109",
-                            VisitReason = "Hesap açma"
-                        });
                 });
 #pragma warning restore 612, 618
         }

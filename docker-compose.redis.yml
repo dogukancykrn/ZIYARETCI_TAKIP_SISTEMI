@@ -1,22 +1,27 @@
+# ZIYARETCI TAKIP SISTEMI - REDIS CACHE DOCKER COMPOSE
+# Bu dosya Redis cache sunucusu ve yönetim arayüzünü Docker container'larında çalıştırır
+
 version: '3.8'
 
 services:
+  # Redis Cache Servisi
   redis:
-    image: redis:7-alpine
-    container_name: ziyaretci-redis
+    image: redis:7-alpine              # Redis 7.x Alpine Linux tabanlı image
+    container_name: ziyaretci-redis    # Container adı
     ports:
-      - "6379:6379"
+      - "6379:6379"                    # Redis varsayılan portu (host:container)
     volumes:
-      - redis_data:/data
-    restart: unless-stopped
-    command: redis-server --appendonly yes
+      - redis_data:/data               # Veri kalıcılığı için volume mount
+    restart: unless-stopped            # Container durduğunda otomatik yeniden başlat
+    command: redis-server --appendonly yes  # AOF (Append Only File) persistence aktif
     networks:
-      - ziyaretci-network
+      - ziyaretci-network             # Özel network'e bağla
 
+  # Redis Commander - Web tabanlı Redis yönetim arayüzü
   redis-commander:
-    image: rediscommander/redis-commander:latest
-    container_name: ziyaretci-redis-commander
-    hostname: redis-commander
+    image: rediscommander/redis-commander:latest  # Redis Commander image
+    container_name: ziyaretci-redis-commander     # Container adı
+    hostname: redis-commander                     # Container hostname
     ports:
       - "8081:8081"
     environment:

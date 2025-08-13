@@ -1,53 +1,72 @@
+// React hook'ları ve bileşenleri içe aktarıyoruz
 import React, { useState } from 'react';
+// Ant Design UI bileşenlerini içe aktarıyoruz
 import { Card, Form, Input, Button, Typography, message, Alert } from 'antd';
+// Ant Design icon'larını içe aktarıyoruz
 import { UserOutlined, LockOutlined, SaveOutlined, ArrowLeftOutlined } from '@ant-design/icons';
-import { useAuth } from '../context/AuthContext';
-import { authService } from '../services/apiService';
+// Context hook'unu içe aktarıyoruz
+import { useAuth } from '../context/AuthContext';           // Kimlik doğrulama context'i
+// API servislerini içe aktarıyoruz
+import { authService } from '../services/apiService';       // Kimlik doğrulama API servisleri
+// React Router navigation hook'unu içe aktarıyoruz
 import { useNavigate } from 'react-router-dom';
 
+// Typography bileşenlerini destructure ediyoruz
 const { Title, Text } = Typography;
 
+// Profil güncelleme formu için veri tipi
 interface ProfileFormData {
-  fullName: string;
-  phoneNumber: string;
-  email: string;
+  fullName: string;     // Tam ad
+  phoneNumber: string;  // Telefon numarası
+  email: string;        // E-posta adresi
 }
 
+// Şifre değiştirme formu için veri tipi
 interface PasswordFormData {
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword: string;
+  currentPassword: string;  // Mevcut şifre
+  newPassword: string;      // Yeni şifre
+  confirmPassword: string;  // Yeni şifre tekrarı
 }
 
+// Kullanıcı profil yönetimi bileşeni
 const ProfilePage: React.FC = () => {
+  // Profil güncelleme yükleme durumu state'i
   const [loading, setLoading] = useState(false);
+  // Şifre değiştirme yükleme durumu state'i
   const [passwordLoading, setPasswordLoading] = useState(false);
+  // Profil güncelleme başarı durumu state'i
   const [success, setSuccess] = useState(false);
+  // Şifre değiştirme başarı durumu state'i
   const [passwordSuccess, setPasswordSuccess] = useState(false);
+  // Auth context'ten state ve updateProfile fonksiyonunu al
   const { state, updateProfile } = useAuth();
+  // Sayfa yönlendirme hook'u
   const navigate = useNavigate();
-  const [profileForm] = Form.useForm();
-  const [passwordForm] = Form.useForm();
+  // Form hook'ları
+  const [profileForm] = Form.useForm();    // Profil formu
+  const [passwordForm] = Form.useForm();   // Şifre formu
 
+  // Profil güncelleme işlemi
   const handleProfileUpdate = async (values: ProfileFormData) => {
-    setLoading(true);
+    setLoading(true); // Yükleme durumunu aktif et
     try {
       // API'ye profil güncelleme isteği gönder
       const updatedAdmin = await authService.updateProfile(values);
-      // Eğer e-posta değiştiyse logout ve login sayfasına yönlendir
+      
+      // Eğer e-posta değiştiyse kullanıcıyı logout edip tekrar giriş yaptır
       if (state.admin?.email && values.email && state.admin.email !== values.email) {
-        // Son kullanılan e-posta bilgisini localStorage'a yaz
+        // Son kullanılan e-posta bilgisini localStorage'a kaydet
         localStorage.setItem('lastEmail', values.email);
         message.success('E-posta adresiniz değiştirildi. Lütfen yeni e-posta ile tekrar giriş yapın.');
+        // 2 saniye sonra login sayfasına yönlendir
         setTimeout(() => {
-          // Çıkış yap ve login sayfasına yönlendir
-          window.location.href = '/login';
+          window.location.href = '/login'; // Tam sayfa yenileme ile logout
         }, 2000);
-        // Logout işlemi
         setLoading(false);
         return;
       }
-      // Context'i güncelle
+      
+      // E-posta değişmemişse sadece context'i güncelle
       updateProfile(updatedAdmin);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 2500);

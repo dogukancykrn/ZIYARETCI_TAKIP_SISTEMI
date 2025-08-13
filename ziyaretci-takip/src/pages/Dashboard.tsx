@@ -1,51 +1,71 @@
+// React hook'ları ve bileşenleri içe aktarıyoruz
 import React, { useEffect, useState } from 'react';
+// Ant Design UI bileşenlerini içe aktarıyoruz
 import { Card, Row, Col, Statistic, Button, Space, Typography, Table, Tag, message } from 'antd';
-import { UserOutlined, LoginOutlined, LogoutOutlined, ClockCircleOutlined, PlusOutlined, HistoryOutlined } from '@ant-design/icons';
+// Ant Design icon'larını içe aktarıyoruz
+import { UserOutlined, LoginOutlined, LogoutOutlined, ClockCircleOutlined, PlusOutlined, HistoryOutlined, BarChartOutlined } from '@ant-design/icons';
+// React Router navigation hook'unu içe aktarıyoruz
 import { useNavigate } from 'react-router-dom';
-import { visitorService } from '../services';
-import { Visitor } from '../types';
-import { useAuth } from '../context/AuthContext';
+// API servislerini içe aktarıyoruz
+import { visitorService } from '../services';        // Ziyaretçi servisleri
+// Tip tanımlarını içe aktarıyoruz
+import { Visitor } from '../types';                  // Ziyaretçi tipi
+// Context hook'unu içe aktarıyoruz
+import { useAuth } from '../context/AuthContext';   // Kimlik doğrulama context'i
 
+// Typography'den Title bileşenini destructure ediyoruz
 const { Title } = Typography;
 
+// Dashboard ana sayfası bileşeni
 const Dashboard: React.FC = () => {
+  // Aktif ziyaretçiler state'i
   const [activeVisitors, setActiveVisitors] = useState<Visitor[]>([]);
+  // Yükleme durumu state'i
   const [loading, setLoading] = useState(false);
+  // İstatistik verileri state'i
   const [stats, setStats] = useState({
-    totalActive: 0,
-    todayVisits: 0,
-    totalVisits: 0
+    totalActive: 0,   // Toplam aktif ziyaretçi sayısı
+    todayVisits: 0,   // Bugünkü ziyaret sayısı
+    totalVisits: 0    // Toplam ziyaret sayısı
   });
+  // Auth context'ten admin bilgilerini al
   const { admin } = useAuth();
+  // Sayfa yönlendirme hook'u
   const navigate = useNavigate();
 
+  // Bileşen mount olduğunda veri yükle
   useEffect(() => {
     loadData();
-  }, []);
+  }, []); // Dependency array boş - sadece mount olduğunda çalış
 
+  // Dashboard verilerini yükleyen fonksiyon
   const loadData = async () => {
-    setLoading(true);
+    setLoading(true); // Yükleme durumunu aktif et
     try {
-      // Hem aktif ziyaretçileri hem de tüm geçmişi çek
+      // Hem aktif ziyaretçileri hem de tüm geçmişi paralel olarak çek
       const [activeVisitorsData, allVisitorsData] = await Promise.all([
-        visitorService.getActiveVisitors(),
-        visitorService.getVisitorHistory()
+        visitorService.getActiveVisitors(),    // Aktif ziyaretçiler
+        visitorService.getVisitorHistory()     // Tüm ziyaretçi geçmişi
       ]);
 
+      // Aktif ziyaretçiler state'ini güncelle
       setActiveVisitors(activeVisitorsData);
 
       // İstatistikleri hesapla
-      const today = new Date().toDateString();
+      const today = new Date().toDateString(); // Bugünün tarih string'i
+      // Bugün giriş yapan ziyaretçileri filtrele
       const todayVisits = allVisitorsData.filter(v => 
         new Date(v.enteredAt).toDateString() === today
       ).length;
 
+      // İstatistikleri state'e kaydet
       setStats({
-        totalActive: activeVisitorsData.length,
-        todayVisits: todayVisits,
-        totalVisits: allVisitorsData.length
+        totalActive: activeVisitorsData.length, // Aktif ziyaretçi sayısı
+        todayVisits: todayVisits,               // Bugünkü ziyaret sayısı
+        totalVisits: allVisitorsData.length     // Toplam ziyaret sayısı
       });
     } catch (error) {
+      // Hata durumunda kullanıcıya mesaj göster
       message.error('Ziyaretçi bilgileri yüklenemedi!');
     } finally {
       setLoading(false);
@@ -54,9 +74,11 @@ const Dashboard: React.FC = () => {
 
   const handleExitVisitor = async (tcNumber: string) => {
     try {
-      await visitorService.exitVisitorByTC(tcNumber);
-      message.success('Ziyaretçi çıkışı başarıyla kaydedildi!');
-      loadData(); // Listeyi yenile
+  await visitorService.exitVisitorByTC(tcNumber);
+  // ActiveVisitors sayfasındaki cache’i temizle
+  sessionStorage.removeItem('active_visitors');
+  message.success('Ziyaretçi çıkışı başarıyla kaydedildi!');
+  loadData(); // Listeyi yenile
     } catch (error) {
       message.error('Çıkış işlemi başarısız!');
     }
@@ -167,6 +189,14 @@ const Dashboard: React.FC = () => {
             onClick={() => navigate('/dashboard/visitor-history')}
           >
             Tüm Ziyaretçiler
+          </Button>
+          <Button 
+            icon={<BarChartOutlined />} 
+            size="large"
+            onClick={() => navigate('/dashboard/analytics')}
+            type="dashed"
+          >
+            Yoğunluk Analizi
           </Button>
         </Space>
       </Card>
