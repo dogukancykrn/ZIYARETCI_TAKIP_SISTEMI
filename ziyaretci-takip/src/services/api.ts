@@ -2,7 +2,7 @@ import axios from "axios";
 
 // API URL ayarı - backend port 5160'ta çalışıyor
 // Vercel ve local ortamlar için API adresini env üzerinden alıyoruz (REACT_APP_API_URL)
-const API_URL = process.env.REACT_APP_API_URL || 'https://ziyaretci-takip-sistemi.onrender.com/api';  // Direkt backend URL'si
+const API_URL = process.env.REACT_APP_API_URL || 'https://ziyaretci-takip-sistemi.onrender.com';  // Direkt backend URL'si (api prefix'i kaldırıldı)
 console.log("API URL:", API_URL);
 
 export const API = axios.create({
