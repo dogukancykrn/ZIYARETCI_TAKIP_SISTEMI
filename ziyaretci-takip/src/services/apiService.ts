@@ -51,7 +51,7 @@ interface IVisitorService {
 }
 
 // API URL'sini konsola yazdır (debug amaçlı)
-console.log("📢 API URL:", process.env.NEXT_PUBLIC_API_URL);
+console.log("📢 API URL:", process.env.REACT_APP_API_URL);
 
 // KİMLİK DOĞRULAMA SERVİSLERİ
 export const authService: IAuthService = {
